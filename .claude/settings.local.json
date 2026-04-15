@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m py_compile main.py template.py record.py utils.py)",
+      "Bash(python -c ' *)",
+      "Bash(python3 -c ' *)"
+    ]
+  }
+}

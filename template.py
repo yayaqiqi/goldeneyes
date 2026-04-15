@@ -1,5 +1,8 @@
 import json
 
+def render(j):
+    return json.dumps(j, ensure_ascii=False, indent=4)
+
 KEY_PUBLIC_NOTE = "public_notes"
 KEY_MUSIC = "music"
 KEY_WISHWALL = "wishwall"
@@ -29,6 +32,7 @@ CTEATE_WASH = """心愿·EPX
 署名：
 内容：
 时间： """
+CREATE_WASH = CTEATE_WASH
 
 PUBLIC_NOTE = """公共留言
 FROM： 
@@ -92,8 +96,7 @@ def getMiniDateInviteContet_OLD(content, type = 0, msg_id = ""):
         ]
     }]
 
-    j = json.dumps(j,ensure_ascii=False, indent=4)
-    return j
+    return render(j)
 
 def getMiniDateInviteContent(content,icon_src):
 
@@ -197,10 +200,11 @@ def getMiniDateInviteContent(content,icon_src):
             }
         ]
       }]
-    j = json.dumps(j,ensure_ascii=False, indent=4)
-    return j
+    return render(j)
 
-def getMiniDateDisEnableContet(content,m):
+getMiniDateInviteContet = getMiniDateInviteContent
+
+def getMiniDateDisEnableContent(content,m):
     EP = content.split("发起人：")[0].strip()
     sender = content.split("发起人：", 1)[1].split("接收人：", 1)[0].strip()
     recever_name = content.split("接收人：", 1)[1].split("时间：", 1)[0].strip()
@@ -287,8 +291,7 @@ def getMiniDateDisEnableContet(content,m):
         ]
       }]
 
-    j = json.dumps(j,ensure_ascii=False, indent=4)
-    return j
+    return render(j)
 
 def getImgTemplate(img_src):
     p_json = [{
@@ -307,10 +310,9 @@ def getImgTemplate(img_src):
                 }
             ]
         }]
-    j = json.dumps(p_json, ensure_ascii=False, indent=4)
-    return j
+    return render(p_json)
 
-def getWashWallContet(content,EP,sender_name,wish,time, name="",type=0):
+def getWashWallContent(content,EP,sender_name,wish,time, name="",type=0):
 
     if type == 0:
         accept_value = content + "\n发布人：" + name
@@ -369,9 +371,9 @@ def getWashWallContet(content,EP,sender_name,wish,time, name="",type=0):
               }
             ]
           }]
+    return render(j)
 
-    j = json.dumps(j,ensure_ascii=False, indent=4)
-    return j
+getWashWallContet = getWashWallContent
 
 def getWashWallDisEnableContent(content):
     EP = content.split("心愿·", 1)[1].split("署名：", 1)[0].strip()
@@ -447,8 +449,9 @@ def getWashWallDisEnableContent(content):
         ]
     }]
 
-    j = json.dumps(j, ensure_ascii=False, indent=4)
-    return j
+    return render(j)
+
+getMiniDateDisEnableContet = getMiniDateDisEnableContent
 
 def getNoteTemplate(content,sender,receiver):
     j = [{
@@ -484,8 +487,7 @@ def getNoteTemplate(content,sender,receiver):
             ]
         }]
 
-    j = json.dumps(j, ensure_ascii=False, indent=4)
-    return j
+    return render(j)
 
 def getPublicNoteTemplate(content,sender,time):
     j = [{
@@ -528,10 +530,9 @@ def getPublicNoteTemplate(content,sender,time):
             ]
         }]
 
-    j = json.dumps(j, ensure_ascii=False, indent=4)
-    return j
+    return render(j)
 
-def getMusicTemplate(note,sender,recevier,time):
+def getMusicTemplate(note,sender,receiver,time):
 
     j = [{
         "type": "card",
@@ -553,7 +554,7 @@ def getMusicTemplate(note,sender,recevier,time):
             "elements": [
               {
                 "type": "kmarkdown",
-                "content": time + " 来自 *" + sender + "* 的一首歌，提醒 *@"+ recevier + "* 收听"
+                "content": time + " 来自 *" + sender + "* 的一首歌，提醒 *@"+ receiver + "* 收听"
               }
             ]
           },
@@ -566,8 +567,7 @@ def getMusicTemplate(note,sender,recevier,time):
           }
         ]
       }]
-    j = json.dumps(j, ensure_ascii=False, indent=4)
-    return j
+    return render(j)
 
 
 def getGiftTemplate(sender,receiver,gift,note,time,imgs):
@@ -632,8 +632,7 @@ def getGiftTemplate(sender,receiver,gift,note,time,imgs):
             }
             j[0]['modules'].append(d)
 
-    j = json.dumps(j, ensure_ascii=False, indent=4)
-    return j
+    return render(j)
 
 def getLetterTemplate(sender,content,imgs):
    j =[{
@@ -662,7 +661,7 @@ def getLetterTemplate(sender,content,imgs):
           }
         ]
       }
-    ]
+     ]
 
    if imgs:
        for src in imgs:
@@ -677,5 +676,4 @@ def getLetterTemplate(sender,content,imgs):
            }
            j[0]['modules'].append(d)
 
-   j = json.dumps(j, ensure_ascii=False, indent=4)
-   return j
+   return render(j)

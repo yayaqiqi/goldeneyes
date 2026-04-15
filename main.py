@@ -29,6 +29,24 @@ logger.addHandler(file_handler)
 
 SUCCESS = "✅ "
 FAIL = "❌ "
+
+def parse_kv(text, *keys):
+    """按中文关键词链式解析文本，返回 {key: value} dict。
+    示例: parse_kv(msg, "发信人：", "收信人：", "内容：")
+    → {"发信人：": "发件人名", "收信人：": "收件人名", "内容：": "正文内容"}
+    """
+    result = {}
+    remaining = text
+    for i, key in enumerate(keys):
+        if key not in remaining:
+            raise ValueError(f"缺少关键词：{key}")
+        if i == len(keys) - 1:
+            result[key] = remaining.split(key, 1)[1].strip()
+        else:
+            next_key = keys[i + 1]
+            result[key] = remaining.split(key, 1)[1].split(next_key, 1)[0].strip()
+    return result
+
 def loadData(name):
     filename = name + ".json"
     try:
@@ -49,7 +67,10 @@ def setData(name, data):
         msg = f"操作失败：{e}"
         return False, msg
 
-config = loadData('config')[1]
+config_flag, config = loadData('config')
+if not config_flag:
+    print(f"启动失败：{config}")
+    import sys; sys.exit(1)
 bot = Bot(token=config['token'])
 bk_header = {f'Authorization': f"Bot {config['token']}", f"Content-Type": f"application/json"}
 url ="https://www.kookapp.cn/api"
@@ -67,9 +88,6 @@ async def auto_skin_notify_task():
 
 @bot.on_message()
 async def handle_all_messages(msg: Message):
-
-    print(msg.__dict__) # todo deleted
-
     if msg._channel_type != 'GROUP': return
 
     message = getMsgContent(msg)
@@ -154,10 +172,7 @@ async def handle_all_messages(msg: Message):
 
 
     elif message == "test123":
-        print(msg.ctx.guild.id)
-        print(msg.ctx.channel.id)
-        ch = msg.ctx.channel
-        print(ch.__dict__)
+        pass  # debug
 
     elif message == "个人档案":
         reply_msg = myPlayCheck(msg.target_id)
@@ -221,8 +236,7 @@ async def handle_all_messages(msg: Message):
 
 @bot.on_event(EventTypes.MESSAGE_BTN_CLICK)
 async def handle_all_events(msg:Message, e:Event):
-
-    print(e.__dict__)
+    pass  # debug
     message = e.extra['body']['value']
     msg_id = e.extra['body']['msg_id']
     target_id = e.extra['body']['target_id']
@@ -291,16 +305,16 @@ def sendLetters(message,msg):
             and "发信人：" in message
             and "内容：" in message):
         try:
-            sender_name = message.split("发信人：", 1)[1].split("收信人：", 1)[0].strip()
-            recever_name = message.split("收信人：", 1)[1].split("内容：", 1)[0].strip()
-            content = message.split("内容：", 1)[1].strip()
+            parts = parse_kv(message, "发信人：", "收信人：", "内容：")
+            sender_name = parts["发信人："]
+            recever_name = parts["收信人："]
+            content = parts["内容："]
 
             names = sData['solos'].keys()
             if recever_name not in names:
                 return FAIL + "收信人错误，请检查格式后重新输入！"
 
             letter_data = loadData(f"{sData['sName']}letter")[1]
-            print(letter_data)
             if sender not in letter_data.keys():letter_data[sender] = []
             imgs = []
             if msg.type == 10:
@@ -481,9 +495,7 @@ def updatePlayRecordByChannelId(channel_id,msg=None):
     pRecords = []
     for name in names:
         precord = readRecord(sName,name)
-        precord['details']['content'] = []
-        precord['details']['counts'] = 0
-        pRecords.append(pRecords)
+        pRecords.append(precord)
 
     # 遍历录入
     for m in mlist:
@@ -645,7 +657,6 @@ def deleteSeries(name,path,channel_id):
 def bindSolo(message,group_id):
     contents = message.replace("绑定·", "").strip().split(" ")
     logger.info(contents)
-    print(contents)
     try:
         sName, pName,user_id,role_id = contents[0], contents[1],contents[2], contents[3]
     except Exception as e:
@@ -702,10 +713,10 @@ def removeSolo(contents,group_id):
         sData['solos'] = {}
 
     remove_name = ""
-    for key, value in sData['solos'].items():
-        if value == group_id:
+    for key in list(sData['solos'].keys()):
+        if sData['solos'][key] == group_id:
             remove_name = key
-            sData['solos'].pop(key)
+            del sData['solos'][key]
             break
 
     if remove_name!="":
@@ -864,7 +875,6 @@ def acceptMinidate(mesaage,channel_id,msg_id):
             sendMessage(sender_channel_id,telling,9)
 
             # 使按钮失效
-            print("in")
             flag, r = disEnableButton(content,msg_id=msg_id,m="已接受")
             if flag: r = SUCCESS +  "接受私约成功"
 
@@ -951,7 +961,7 @@ def updateMessage(msg_id, content):
 
 def disEnableButton(content,msg_id,m):
     # 使按钮失效
-    disenable_content = T.getMiniDateDisEnableContet(content,m)
+    disenable_content = T.getMiniDateDisEnableContent(content,m)
     response = updateMessage(msg_id, disenable_content)
 
     return True, response
@@ -981,13 +991,15 @@ def noteTo(message, channel_id):
 def sendGift(message,msg):
 
     channel_id = msg.target_id
+    imgs = []
     try:
         toName = message.split("礼物·", 1)[1].split("送礼者：", 1)[0].strip()
-        sender = message.split("送礼者：", 1)[1].split("收礼者：", 1)[0].strip()
-        receiver = message.split("收礼者：", 1)[1].split("时间：", 1)[0].strip()
-        time = message.split("时间：", 1)[1].split("内容：", 1)[0].strip()
-        gift = message.split("内容：", 1)[1].split("留言：", 1)[0].strip()
-        note = message.split("留言：", 1)[1].strip()
+        parts = parse_kv(message, "送礼者：", "收礼者：", "时间：", "内容：", "留言：")
+        sender = parts["送礼者："]
+        receiver = parts["收礼者："]
+        time = parts["时间："]
+        gift = parts["内容："]
+        note = parts["留言："]
     except Exception as e:
         logger.error(e)
         return False, FAIL + "格式错误！\n" + template.GIFT
@@ -1064,14 +1076,15 @@ def getImgSrcsFromCardMessage(msg):
     return imgs
 def publicWish(message,channel_id):
 
-    # try:
-    EP = message.split("心愿·", 1)[1].split("署名：", 1)[0].strip()
-    sender_name = message.split("署名：", 1)[1].split("内容：", 1)[0].strip()
-    wish = message.split("内容：", 1)[1].split("时间：", 1)[0].strip()
-    time = message.split("时间：", 1)[1].strip()
-    # except Exception as e:
-    #     logger.error(e)
-    #     return FAIL + f"格式错误！\n {template.CTEATE_WASH}"
+    try:
+        EP = message.split("心愿·", 1)[1].split("署名：", 1)[0].strip()
+        parts = parse_kv(message, "署名：", "内容：", "时间：")
+        sender_name = parts["署名："]
+        wish = parts["内容："]
+        time = parts["时间："]
+    except Exception as e:
+        logger.error(e)
+        return FAIL + f"格式错误！\n {template.CREATE_WASH}"
 
 
     info = getChannelInfo(channel_id)
@@ -1079,12 +1092,12 @@ def publicWish(message,channel_id):
     guild_name = info['guild_name']
 
 
-    publish_content = template.getWashWallContet(message,EP,sender_name,wish,time,publish_name,0)
+    publish_content = template.getWashWallContent(message,EP,sender_name,wish,time,publish_name,0)
     sData = loadData(guild_name)[1]
     wash_channel_id = sData['public_channels'][template.KEY_WISHWALL]
 
     if EP != sData['current_EP'] or wish == '' or time == '':
-        return FAIL + f"格式错误！\n {template.CTEATE_WASH}"
+        return FAIL + f"格式错误！\n {template.CREATE_WASH}"
 
     sendMessage(wash_channel_id,publish_content,10)
     return SUCCESS + "心愿发布成功！"
@@ -1096,54 +1109,46 @@ def goWish(message,channel_id,recever_name,msg_id):
     # 获取恋综信息
     sData = getsDataJsonByChannelId(channel_id)
     EP = message.split("心愿·", 1)[1].split("署名：", 1)[0].strip()
-    name = message.split("署名：", 1)[1].split("内容：", 1)[0].strip()
-    wish = message.split("内容：", 1)[1].split("时间：", 1)[0].strip()
-    time = message.split("时间：", 1)[1].split("发布人：", 1)[0].strip()
+    parts = parse_kv(message, "署名：", "内容：", "时间：", "发布人：")
+    wish = parts["内容："]
+    time = parts["时间："]
+    sender_name = parts["发布人："]
 
     parent_id = sData['parents'][EP]
     guild_id = sData['guild_id']
 
-    try:
-        sender_name = content.split("发布人：", 1)[1].strip()
+    recever_channel_id = sData['solos'][recever_name]
+    sender_channel_id = sData['solos'][sender_name]
 
-        recever_channel_id = sData['solos'][recever_name]
-        sender_channel_id = sData['solos'][sender_name]
+    if recever_name == sender_name:
+        sendMessage(sender_channel_id,FAIL + "操作失败，发布心愿者不能领取",9)
+        return False, FAIL + "操作失败，发布心愿者不能领取"
 
-        if recever_name == sender_name:
-            sendMessage(sender_channel_id,FAIL + "操作失败，发布心愿者不能领取",9)
-            return False, FAIL + "操作失败，发布心愿者不能领取"
+    roles = []
+    roles.append(sData['roles'][recever_name])
+    roles.append(sData['roles'][sender_name])
 
-        roles = []
-        roles.append(sData['roles'][recever_name])
-        roles.append(sData['roles'][sender_name])
+    name = f"心愿：{sender_name}&{recever_name}"
+    created_channel_id = createChannel(guild_id, parent_id, name, roles)
 
-        name = f"心愿：{sender_name}&{recever_name}"
-        created_channel_id = createChannel(guild_id, parent_id, name, roles)
+    telling = f"心愿已发起：(chn){created_channel_id}(chn)"
 
-        telling = f"心愿已发起：(chn){created_channel_id}(chn)"
-
-        sendMessage(recever_channel_id, telling, 9)
-        sendMessage(sender_channel_id, telling, 9)
+    sendMessage(recever_channel_id, telling, 9)
+    sendMessage(sender_channel_id, telling, 9)
 
 
-        # disEnableWishContent = template.getWashWallDisEnableContent(disEnableContent)
-        disEnableWishContent = template.getWashWallContet(message,EP,name,wish,time,sender_name,1)
-        updateMessage(msg_id,disEnableWishContent)
+    # disEnableWishContent = template.getWashWallDisEnableContent(disEnableContent)
+    disEnableWishContent = template.getWashWallContent(message,EP,name,wish,time,sender_name,1)
+    updateMessage(msg_id,disEnableWishContent)
 
-        # 增加个人档案记录 - senderName
-        createRecord(sData['sName'], [sender_name, recever_name], recever_name, EP, created_channel_id,name)
+    # 增加个人档案记录 - senderName
+    createRecord(sData['sName'], [sender_name, recever_name], recever_name, EP, created_channel_id,name)
 
-        return True, "success"
-
-    except Exception as e:
-        logger.error(e)
-        print(e)
-        return False, f"{T.MINIDATE_CREATE}"
+    return True, "success"
 
 def updateSData(message):
     try:
         contents = message.replace("更改信息·","").strip().split(" ")
-        print(contents)
         sName = contents[0]
         p = contents[1]
         key = contents[2]
