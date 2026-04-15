@@ -1019,7 +1019,7 @@ def sendGift(message,msg):
 def systemSendGift(msg):
     sData = getsDataJsonByChannelId(msg.target_id)
     letter_file = sData['sName'] + "letter"
-    letter_path = PATH + letter_file + ".json"
+    letter_path = os.path.join(PATH, letter_file + ".json")
 
     letter_data = loadData(letter_file)[1]
     cnt = 0
@@ -1036,12 +1036,15 @@ def systemSendGift(msg):
         sendMessage(msg.target_id,f"信 from {key} 已发送",9)
     sendMessage(msg.target_id, SUCCESS + f"发送完毕， 共{cnt}封。",9)
 
+    if cnt == 0:
+        return
+
     # 备份 letter.json
     if os.path.exists(letter_path):
-        backup_dir = PATH + sData['sName'] + "/"
+        backup_dir = os.path.join(PATH, sData['sName'])
         os.makedirs(backup_dir, exist_ok=True)
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_path = backup_dir + letter_file + "_backup_" + timestamp + ".json"
+        backup_path = os.path.join(backup_dir, f"letter_backup_{timestamp}.json")
         shutil.copy2(letter_path, backup_path)
 
     # 清空 letter.json
