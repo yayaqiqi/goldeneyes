@@ -1,0 +1,74 @@
+2026-03-15 09:11:58 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"e7ef367f-899c-4a74-bb5b-0c083dea0219","msg_timestamp":1773537118310,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 09:12:02 - KOOK_Robot - INFO - {'code': 0, 'message': '操作成功', 'data': {'role_id': '63240954', 'allow': 2048, 'deny': 0}}
+2026-03-15 09:12:02 - KOOK_Robot - INFO - {'code': 0, 'message': '操作成功', 'data': {'role_id': '63240953', 'allow': 2048, 'deny': 0}}
+2026-03-15 09:12:03 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"b82c6e42-a2a8-4cf1-8535-025e6cd69ff3","msg_timestamp":1773537123594,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 09:12:04 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"f4c683b6-4922-479f-92eb-cd1e6530c997","msg_timestamp":1773537124271,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 09:12:05 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{}}
+2026-03-15 09:12:17 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:12:17 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:12:22 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:12:22 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:36:17 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:36:17 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:36:17 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:36:17 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:43:28 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:43:28 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:43:28 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:43:28 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:44:31 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:44:31 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:44:31 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:44:31 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:44:32 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"21ae9c0b-2ccd-4990-bb41-08f48b211e07","msg_timestamp":1773539072162,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 15:29:28 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 15:29:28 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 15:54:39 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"25ea6e15-8ffd-42b1-8ea3-04ebab506087","msg_timestamp":1773561280082,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 15:54:39 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"b7d0d7b2-d1f5-4634-902d-79e6cf4c0141","msg_timestamp":1773561280671,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 15:54:40 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"82bb1606-1826-401b-9e14-3e608d2651a2","msg_timestamp":1773561281347,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 15:54:41 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"d587cde7-f055-460d-9ea7-0d1823669b9f","msg_timestamp":1773561282048,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 15:54:41 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"fdf6ed67-cfbe-454d-98f5-34989098fa01","msg_timestamp":1773561282765,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 15:54:42 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"b29c9b4a-c1a1-43e6-be59-4d9ae25ecaed","msg_timestamp":1773561283548,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:00:12 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:00:12 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:00:13 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:00:13 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:00:13 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:00:13 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:00:13 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:00:13 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:00:46 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"2835fd76-69c5-4624-892d-98fa72575692","msg_timestamp":1773561647554,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:00:48 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"e4934ac1-f2a8-4d1f-82d7-3dec0c93c2bc","msg_timestamp":1773561649561,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:00:50 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"f5542a7a-fbd2-4750-a901-cfabee6f6ab7","msg_timestamp":1773561651531,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:00:52 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"c5eba7e2-c67b-4228-b288-c3cb09009fc6","msg_timestamp":1773561653328,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:02:56 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"a4b47155-3ff1-486d-9071-5a3a95e402a8","msg_timestamp":1773561777911,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:02:58 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"cb12740e-c450-447b-88f2-8180720bb3e5","msg_timestamp":1773561779606,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:03:00 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:03:00 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:03:00 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:03:00 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:03:00 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"51f8c5a0-fbef-4506-b2e4-da2be6c2a0e1","msg_timestamp":1773561781894,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:03:02 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:03:02 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:03:02 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 16:03:02 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:03:03 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"cf936159-3d70-4b6c-920b-ff882740d50b","msg_timestamp":1773561784364,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:03:05 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"61aa2f3a-b9b2-42a3-a44b-5729374017aa","msg_timestamp":1773561786277,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:03:07 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"5c627e32-60b6-40fd-96c7-44d4c5d71842","msg_timestamp":1773561788112,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:04:25 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"ef68f3dc-6a74-4ee6-84bd-cc62d07385be","msg_timestamp":1773561866627,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:04:27 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"1fef4eb4-c47f-4f0f-98e2-3a0a13875d4d","msg_timestamp":1773561868441,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:04:29 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"479e2b2f-a323-4d39-8219-03b63110d58a","msg_timestamp":1773561870159,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:04:30 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"d42477ae-6062-4555-8d25-989ddbd03b4a","msg_timestamp":1773561872013,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:06:39 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"99eb9ba8-8864-4822-9e6a-2c6204199ec2","msg_timestamp":1773562000579,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:06:41 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"bdd596b9-4624-4893-bd6b-7ccf8f0e25d1","msg_timestamp":1773562002504,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:06:43 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"539884ba-7c97-4eaf-84cd-0b7d3d5cce71","msg_timestamp":1773562004349,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:06:45 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"c36814db-59b7-4a1b-a569-2092f6d68e15","msg_timestamp":1773562006277,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:15:03 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"e46b899a-3bfc-4bed-8366-6eadfa2a725e","msg_timestamp":1773562503237,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:15:04 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"378ecc98-2399-4e7b-a9ab-1fdf306f8b10","msg_timestamp":1773562503924,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:15:05 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"e26dcdbd-9516-4190-a542-4471e498ae3b","msg_timestamp":1773562505007,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:15:39 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"521473fa-634a-4591-add8-f44f8de65510","msg_timestamp":1773562539451,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 16:40:39 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 16:40:39 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 17:14:38 - KOOK_Robot - ERROR - list index out of range
+2026-03-15 17:14:55 - KOOK_Robot - ERROR - list index out of range
+2026-03-15 19:07:24 - KOOK_Robot - ERROR - list index out of range

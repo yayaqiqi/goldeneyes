@@ -1,0 +1,33 @@
+{
+    "马克": [],
+    "观荐": [
+        {
+            "sender_name": "St.",
+            "recever_name": "马克",
+            "content": "测试内容",
+            "imgs": [
+                "https://img.kookapp.cn/assets/2026-03/14/XWzFML2Mrc04q02s.png"
+            ]
+        },
+        {
+            "sender_name": "St.",
+            "recever_name": "陶好好",
+            "content": "测试内容",
+            "imgs": []
+        },
+        {
+            "sender_name": "St.",
+            "recever_name": "陶好好",
+            "content": "测试内容",
+            "imgs": []
+        }
+    ],
+    "Overrated": [
+        {
+            "sender_name": "/",
+            "recever_name": "观荐",
+            "content": "❤",
+            "imgs": []
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+2026-03-14 21:27:21 - KOOK_Robot - ERROR - 'str' object has no attribute 'keys'
+2026-03-14 21:27:59 - KOOK_Robot - ERROR - 'str' object has no attribute 'keys'
+2026-03-14 21:30:50 - KOOK_Robot - INFO - ['头颅', '陶好好', '(met)1361829530(met)', '(rol)63240949(rol)']
+2026-03-14 21:55:03 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"acaf1ad1-2a34-4367-a171-908992d44823","msg_timestamp":1773496503594,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:04 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"29b14658-bf31-45f0-944a-61e5bda23683","msg_timestamp":1773496504992,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:05 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"8d02f1c7-a54c-4f59-9298-3b9e45f0bf7a","msg_timestamp":1773496505931,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:05 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"9e7046be-343c-43ab-8c6b-5dcfa0f2575c","msg_timestamp":1773496506761,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:50 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"9bd9972c-0a1a-4ca8-9b3c-947e4676f898","msg_timestamp":1773496551413,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:51 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"536d697e-ceca-4001-8eb5-140f487a9ff2","msg_timestamp":1773496552485,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:52 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"bbf12b22-1cfb-4c68-b5e6-848b8279c85b","msg_timestamp":1773496553330,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:53 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"018c205e-59e8-4e55-8a19-61a13ceea9b0","msg_timestamp":1773496554137,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:55:53 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"f030de8b-9766-42fd-b23f-93881faa89be","msg_timestamp":1773496554828,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:57:16 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"44ecbccf-d362-49eb-9141-5ba34f1e436f","msg_timestamp":1773496637691,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:57:17 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"abcaa3c5-4013-459d-b2c1-260c37f3cf79","msg_timestamp":1773496638531,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:57:18 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"1fce1674-01ad-40b4-94f7-efd5f81ab040","msg_timestamp":1773496639351,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:57:19 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"e8a605db-ed57-4696-9981-85fceb7b1273","msg_timestamp":1773496640189,"nonce":"","not_permissions_mention":[]}}
+2026-03-14 21:57:19 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"5ffc5f07-521c-464a-ab76-5098e3cc60e5","msg_timestamp":1773496641000,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 09:10:48 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"9a6214ff-62f3-4102-b48c-52c8f3713686","msg_timestamp":1773537048244,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 09:10:53 - KOOK_Robot - INFO - {'code': 0, 'message': '操作成功', 'data': {'role_id': '63240954', 'allow': 2048, 'deny': 0}}
+2026-03-15 09:10:54 - KOOK_Robot - INFO - {'code': 0, 'message': '操作成功', 'data': {'role_id': '63240953', 'allow': 2048, 'deny': 0}}
+2026-03-15 09:10:54 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"3f391140-f090-4bfb-86cc-94c5047769b6","msg_timestamp":1773537054786,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 09:10:55 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{"msg_id":"f782eb26-c036-4178-9c73-d8f24a64263a","msg_timestamp":1773537055398,"nonce":"","not_permissions_mention":[]}}
+2026-03-15 09:10:56 - KOOK_Robot - INFO - {"code":0,"message":"操作成功","data":{}}
+2026-03-15 09:11:08 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:11:08 - KOOK_Robot - INFO - updated [观荐]!
+2026-03-15 09:11:15 - KOOK_Robot - INFO - updated [马克]!
+2026-03-15 09:11:15 - KOOK_Robot - INFO - updated [观荐]!
