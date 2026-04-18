@@ -82,8 +82,8 @@ async def auto_skin_notify_task():
     # 每天清理删除频道
     for sName in guilds.values():
         deleteErrorChannel(sName)
-        timeoutEndPlay(sName)
-        remind(sName)
+        # timeoutEndPlay(sName)
+        # remind(sName)
 
 
 @bot.on_message()
@@ -302,43 +302,46 @@ def sendLetters(message,msg):
     """
     sData = getsDataJsonByChannelId(msg.target_id)
     sender = msg.ctx.channel.name
-
+    print(message)
+    print(sender)
+    print(msg.target_id)
     if ("收信人：" in message
             and "发信人：" in message
             and "内容：" in message):
-        try:
-            parts = parse_kv(message, "发信人：", "收信人：", "内容：")
-            sender_name = parts["发信人："]
-            recever_name = parts["收信人："]
-            content = parts["内容："]
+        # try:
+        parts = parse_kv(message, "发信人：", "收信人：", "内容：")
+        sender_name = parts["发信人："]
+        recever_name = parts["收信人："]
+        content = parts["内容："]
 
-            names = sData['solos'].keys()
-            if recever_name not in names:
-                return FAIL + "收信人错误，请检查格式后重新输入！"
+        names = sData['solos'].keys()
+        print(names)
+        if recever_name not in names:
+            return FAIL + "收信人错误，请检查格式后重新输入！"
 
-            letter_data = loadData(f"{sData['sName']}letter")[1]
-            if sender not in letter_data.keys():letter_data[sender] = []
-            imgs = []
-            if msg.type == 10:
-                imgs = getImgSrcsFromCardMessage(msg)
+        letter_data = loadData(f"{sData['sName']}letter")[1]
+        if sender not in letter_data.keys():letter_data[sender] = []
+        imgs = []
+        if msg.type == 10:
+            imgs = getImgSrcsFromCardMessage(msg)
 
-            letter = {
-                'sender_name':sender_name,
-                'recever_name':recever_name,
-                'content':content,
-                'imgs': imgs
-            }
+        letter = {
+            'sender_name':sender_name,
+            'recever_name':recever_name,
+            'content':content,
+            'imgs': imgs
+        }
 
-            #
+        #
 
-            letter_data[sender].append(letter)
-            setData(f"{sData['sName']}letter",letter_data)
-            return SUCCESS + "心动信已收录"
+        letter_data[sender].append(letter)
+        setData(f"{sData['sName']}letter",letter_data)
+        return SUCCESS + "心动信已收录"
 
 
-        except Exception as e:
-            logger.error(e)
-            return "格式错误，请按照以下格式发送心动信\n" + T.LETTER
+        # except Exception as e:
+        #     logger.error(e)
+        #     return "格式错误，请按照以下格式发送心动信\n" + T.LETTER
 
 
     else:
@@ -576,6 +579,9 @@ def createSeries(message,msg):
             "user_ids":{}
         }
         json.dump(data, f, indent=4, ensure_ascii=False)
+
+    with open(PATH + "/" + name + "letter.json", 'w', encoding='utf-8') as f:
+        json.dump({}, f, ensure_ascii=False)
 
     flag, data = loadData("data")
     if not flag: return flag,data
