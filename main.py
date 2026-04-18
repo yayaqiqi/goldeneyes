@@ -171,7 +171,8 @@ async def handle_all_messages(msg: Message):
         await msg.reply(SUCCESS + "添加成功")
 
 
-    elif message == "test123":
+    elif message == "test12":
+        await msg.reply("测试成功123")
         pass  # debug
 
     elif message == "个人档案":
@@ -180,6 +181,7 @@ async def handle_all_messages(msg: Message):
 
     elif message == "结束对戏":
         endPlay(msg)
+
 
     elif message == "更新记录":
         updatePlayRecordByChannelId(msg.target_id,msg)
