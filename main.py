@@ -463,6 +463,7 @@ def remind(sName):
     return SUCCESS
 
 def endPlay(channel_id):
+    channel_id = channel_id.ctx.channel.id
     info = getChannelInfo(channel_id)
     c_name = info['name']
     names = c_name[3:].split("&")
@@ -589,6 +590,7 @@ def createSeries(message,msg):
     #     return False,f"操作失败:{e}"
 
 def getChannelInfo(channel_id):
+
     params = {
         "target_id":channel_id
     }
