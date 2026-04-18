@@ -185,6 +185,7 @@ async def handle_all_messages(msg: Message):
 
     elif message == "更新记录":
         updatePlayRecordByChannelId(msg.target_id,msg)
+        await msg.reply(SUCCESS + "记录已更新")
 
     elif message.startswith("修正删除频道·"):
         sName = message.replace("修正删除频道·","").strip()
@@ -424,7 +425,7 @@ def deleteErrorChannel(sName):
     for name in names:
         precord = readRecord(sName,name)
         delete_channels = []
-        channels = precord['details'].keys()
+        channels = list(precord['details'].keys())
         for channel_id in channels:
             response = getChannel(channel_id)
             if response['code'] == 400:
@@ -466,7 +467,6 @@ def remind(sName):
     return SUCCESS
 
 def endPlay(channel_id):
-    channel_id = channel_id.ctx.channel.id
     info = getChannelInfo(channel_id)
     c_name = info['name']
     names = c_name[3:].split("&")
@@ -498,10 +498,11 @@ def updatePlayRecordByChannelId(channel_id,msg=None):
         names = msg.ctx.channel.name[3:].split("&")
     sData = getsDataJsonByChannelId(channel_id)
     sName = sData['sName']
-    pRecords = []
+    
     for name in names:
         precord = readRecord(sName,name)
-        pRecords.append(precord)
+        precord['details'][channel_id]['content'] = []
+        saveRecord(sName,name,precord)
 
     # 遍历录入
     for m in mlist:
@@ -516,7 +517,7 @@ def playedUpdatedRecord(message, msg=None,channel_id=None):
         channel_id = msg.target_id
     info = getChannelInfo(channel_id)
     sData = loadData(info['guild_name'])[1]
-    names = sData['solos'].keys()
+    # names = sData['solos'].keys()
     channel_name = info['name'].strip()
     persons = channel_name[3:].split("&")
 

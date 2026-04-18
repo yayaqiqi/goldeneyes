@@ -1,0 +1,34 @@
+{
+    "name": "陈耀",
+    "sName": "蓝色雨",
+    "finished": 2,
+    "groups": 3,
+    "details": {
+        "4825064410721146": {
+            "is_finished": 1,
+            "counts": 70,
+            "last_time": "2026-04-18 21:04",
+            "current_person": "陈耀",
+            "channel_name": "私约：陈耀&测试人",
+            "EP": "EP1",
+            "content": [
+                "陈耀\n回戏内容\n",
+                "测试人 \n 😘"
+            ]
+        },
+        "1933109646877429": {
+            "is_finished": 1,
+            "counts": 145,
+            "last_time": "2026-04-18 21:05",
+            "current_person": "测试人",
+            "channel_name": "私约：测试人&陈耀",
+            "EP": "EP1",
+            "content": [
+                "测试人\n一条回戏",
+                "陈耀\n两条回戏",
+                "测试人\n111",
+                "陈耀\n222"
+            ]
+        }
+    }
+}
