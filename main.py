@@ -1,3 +1,4 @@
+from turtle import goto
 from khl import Bot, Message, MessageTypes, Event, EventTypes
 from khl.card import Card, CardMessage, Module, Types, Element, Struct
 import json
@@ -225,6 +226,10 @@ async def handle_all_messages(msg: Message):
         await msg.reply(cm)
         # await msg.reply(file_url, type=MessageTypes.FILE)
         await msg.reply(rpl)
+    
+    elif message.startswith("进入EP："):
+        rpl = gotoEP(message,msg)
+        await msg.reply(rpl)
 
 
     else:
@@ -261,6 +266,16 @@ async def handle_all_events(msg:Message, e:Event):
 
     elif message.startswith("心愿·"):
         flag, rpl = goWish(message, channel_id=target_id,recever_name=user_nickname,msg_id=msg_id)
+
+def gotoEP(message,msg):
+
+    EP = message.split("进入EP：",1)[1].strip()
+
+    info = getsDataJsonByChannelId(msg.target_id)
+    info['current_EP'] = EP
+    setData(info['sName'],info)
+    
+    return SUCCESS + f"设置 [{EP}] 成功"
 
 def addRecordCounts(message,channel_id,sName):
     name = message.split("\n",1)[0].strip()
@@ -820,7 +835,7 @@ def getsDataJsonByChannelId(channel_id):
     return sData
 
 def inviteMinidate(mesaage,msg):
-
+    logger.info(mesaage)
     channel_id = msg.target_id
     content = mesaage.replace("私约·","").strip()
     if ("发起人：" in content
@@ -1106,6 +1121,7 @@ def publicWish(message,channel_id):
 
 
     publish_content = template.getWashWallContent(message,EP,sender_name,wish,time,publish_name,0)
+    # publish_content = template.getWashWallContent(message,EP,publish_name,wish,time,sender_name,0)
     sData = loadData(guild_name)[1]
     wash_channel_id = sData['public_channels'][template.KEY_WISHWALL]
 

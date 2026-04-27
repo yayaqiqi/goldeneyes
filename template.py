@@ -350,7 +350,7 @@ def getWashWallContent(content,EP,sender_name,wish,time, name="",type=0):
                 "elements": [
                   {
                     "type": "plain-text",
-                    "content": name + " 在 "+ time +" 发布"
+                    "content": sender_name + " 在 "+ time +" 发布"
                   }
                 ]
               },
