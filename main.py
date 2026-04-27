@@ -414,7 +414,7 @@ def myPlayCheck(channel_id):
 
     for ep in groups.keys():
         if groups[ep]!= "":
-            rpl = rpl + ep + "\n" + groups[ep] + "\n"
+            rpl = rpl +"**"+ ep + "**\n" + groups[ep] + "\n"
 
     reply = rpl + "\n" + f"当前共结戏 {pData['finished']} 个, 已写 {counts} 字 ❤。"
     return reply
@@ -669,7 +669,7 @@ def bindSolo(message,group_id):
     contents = message.replace("绑定·", "").strip().split(" ")
     logger.info(contents)
     try:
-        sName, pName,user_id,role_id = contents[0], contents[1],contents[2], contents[3]
+        sName, pName,user_id,role_id = contents[0].strip(), contents[1].strip(),contents[2].strip(), contents[3].strip()
     except Exception as e:
         msg = FAIL + f"操作失败，个人频道绑定格式：绑定·恋综名称 角色名称 @玩家账号 @角色组"
         logger.info(msg)
