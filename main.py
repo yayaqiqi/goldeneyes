@@ -502,6 +502,7 @@ def updatePlayRecordByChannelId(channel_id,msg=None):
     for name in names:
         precord = readRecord(sName,name)
         precord['details'][channel_id]['content'] = []
+        precord['details'][channel_id]['counts'] = 0
         saveRecord(sName,name,precord)
 
     # 遍历录入
@@ -669,7 +670,7 @@ def bindSolo(message,group_id):
     contents = message.replace("绑定·", "").strip().split(" ")
     logger.info(contents)
     try:
-        sName, pName,user_id,role_id = contents[0].strip(), contents[1].strip(),contents[2].strip(), contents[3].strip()
+        sName, pName,user_id,role_id = contents[0], contents[1].strip(),contents[2].strip(), contents[3].strip()
     except Exception as e:
         msg = FAIL + f"操作失败，个人频道绑定格式：绑定·恋综名称 角色名称 @玩家账号 @角色组"
         logger.info(msg)
@@ -776,6 +777,7 @@ def createChat(content,channel_id):
     }
     response = requests.post(url + '/v3/channel/create', headers=bk_header, json=payload)
     msg = json.loads(response.text)
+    logger.info(msg)
     created_channel_id = msg['data']['id']
 
     # 更新频道角色
@@ -788,7 +790,7 @@ def createChat(content,channel_id):
         reply_content = SUCCESS + f"通讯创建成功：(chn){created_channel_id}(chn)"
         sendMessage(p_channel_id,reply_content,9)
 
-    return True
+    return True,reply_content
 
 def sendMessage(target_id, content,type):
     payload = {
