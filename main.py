@@ -128,6 +128,10 @@ async def handle_all_messages(msg: Message):
         flag,rpl = createChat(contents,msg.target_id)
         if not flag: await msg.reply(rpl)
 
+    elif message.startswith("创建频道·"):
+        rpl = createEPChannels(message, msg)
+        await msg.reply(rpl)
+
     elif message.startswith("私约·"):
         flag, rpl = inviteMinidate(message,msg)
         await msg.reply(rpl)
@@ -151,6 +155,13 @@ async def handle_all_messages(msg: Message):
         rpl = publicWish(message,msg.target_id)
         await msg.reply(rpl)
 
+    elif message.startswith("踩点·"):
+        rpl = sendCaidian(message, msg)
+        await msg.reply(rpl)
+
+    elif message == "查看踩点信息":
+        rpl = getCaidianInfo(msg.target_id)
+        await msg.reply(rpl)
 
     elif message.startswith("心动信"):
         rpl = sendLetters(message,msg)
@@ -267,6 +278,10 @@ async def handle_all_events(msg:Message, e:Event):
 
     elif message.startswith("心愿·"):
         flag, rpl = goWish(message, channel_id=target_id,recever_name=user_nickname,msg_id=msg_id)
+
+    elif message.startswith("踩点选择"):
+        rpl = selectCaidian(message, user_nickname,target_id)
+
 
 def gotoEP(message,msg):
 
@@ -809,6 +824,45 @@ def createChat(content,channel_id):
 
     return True,reply_content
 
+def createEPChannels(message, msg):
+    channel_id = msg.target_id
+    content = message.replace("创建频道·", "").strip()
+    lines = content.split("\n")
+    if len(lines) < 2:
+        return FAIL + "创建频道失败，格式错误！格式：\n创建频道·EPX\n官约：角色A&角色B\n踩点：角色C&角色D"
+
+    ep_name = lines[0].strip()
+    if not ep_name.startswith("EP"):
+        return FAIL + "创建频道失败，EP编号格式错误！格式：\n创建频道·EPX\n官约：角色A&角色B\n踩点：角色C&角色D"
+
+    sData = getsDataJsonByChannelId(channel_id)
+    if ep_name not in sData['parents'].keys():
+        return FAIL + f"创建频道失败，未找到 EP 分类 [{ep_name}]，请先在恋综配置中添加"
+
+    parent_id = sData['parents'][ep_name]
+    guild_id = sData['guild_id']
+    reply_messages = []
+
+    for line in lines[1:]:
+        line = line.strip()
+        if not line:
+            continue
+        channel_type, players = line.split("：", 1)
+        players = players.strip().split("&")
+        channel_name = line
+        roles = []
+        for pname in players:
+            pname = pname.strip()
+            if pname in sData['roles'].keys() and sData['roles'][pname]:
+                roles.append(sData['roles'][pname])
+
+        created_channel_id = createChannel(guild_id, parent_id, channel_name, roles)
+        reply_messages.append(f"{channel_name} 创建成功：(chn){created_channel_id}(chn)")
+    if reply_messages:
+        return "\n".join(reply_messages)
+    else:
+        return FAIL + "创建频道失败，未解析到有效的频道信息"
+
 def sendMessage(target_id, content,type):
     payload = {
         "target_id": target_id,
@@ -951,6 +1005,7 @@ def saveRecord(sName,pName,data):
     with open(filename, "w", encoding="utf-8") as w:
         json.dump(data, w, indent=4, ensure_ascii=False)
     return
+
 
 def createChannel(guild_id, parent_id, name, roles=None):
     payload = {
@@ -1177,6 +1232,65 @@ def goWish(message,channel_id,recever_name,msg_id):
     createRecord(sData['sName'], [sender_name, recever_name], recever_name, EP, created_channel_id,name)
 
     return True, "success"
+
+def sendCaidian(message, msg):
+    channel_id = msg.target_id
+    content = message.replace("踩点·", "").strip()
+    locations = [loc.strip() for loc in content.split("、") if loc.strip()]
+    if len(locations) == 0:
+        return FAIL + "踩点失败，格式错误！格式：踩点·A、B、C、D、E、F"
+    
+    sData = getsDataJsonByChannelId(channel_id)
+    if 'caidian' not in sData:
+        sData['caidian'] = {}
+    sData['caidian']['locations'] = locations
+    sData['caidian']['selections'] = {}
+    setData(sData['sName'], sData)
+
+    card_content = template.getCaidianContent(locations)
+    sendMessage(sData['public_channels'][template.KEY_CAIDIAN], card_content, 10)
+    return SUCCESS + f"踩点卡片已发送，共 {len(locations)} 个地点"
+
+def selectCaidian(message, user_nickname, channel_id):
+    user_nickname = user_nickname.strip()
+    location = message.replace("踩点选择·", "").strip()
+    sData = getsDataJsonByChannelId(channel_id)
+    rpl = ""
+    
+    if location not in sData['caidian']['locations']:
+        rpl = FAIL + f"选择失败，[{location}] 不存在"
+
+    if user_nickname not in sData['solos'].keys():
+        rpl = FAIL + f"踩点选择失败，[{user_nickname}] 不存在"
+        logger.error(rpl)
+        return rpl
+
+    sData['caidian']['selections'][user_nickname] = location
+    setData(sData['sName'], sData)
+
+    rpl = SUCCESS + f"[{user_nickname}] 已选择：【{location}】"
+    solo_id = sData['solos'][user_nickname]
+    sendMessage(solo_id,rpl,9)
+    return rpl
+
+def getCaidianInfo(channel_id):
+    sData = getsDataJsonByChannelId(channel_id)
+
+    if 'caidian' not in sData or 'locations' not in sData['caidian']:
+        return FAIL + "暂无踩点信息"
+
+    locations = sData['caidian']['locations']
+    selections = sData['caidian'].get('selections', {})
+
+    result = ["**可踩点地点：**"]
+    for loc in locations:
+        players = [name for name, choice in selections.items() if choice == loc]
+        if players:
+            result.append(f"- {loc}：{'、'.join(players)}")
+        else:
+            result.append(f"- {loc}：（暂无）")
+
+    return "\n".join(result)
 
 def updateSData(message):
     try:

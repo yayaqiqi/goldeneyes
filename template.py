@@ -6,6 +6,7 @@ def render(j):
 KEY_PUBLIC_NOTE = "public_notes"
 KEY_MUSIC = "music"
 KEY_WISHWALL = "wishwall"
+KEY_CAIDIAN = "caidian"
 
 MINIDATE_CREATE ="""私约·EPX
 发起人：
@@ -677,3 +678,52 @@ def getLetterTemplate(sender,content,imgs):
            j[0]['modules'].append(d)
 
    return render(j)
+
+def getCaidianContent(locations):
+    modules = [
+        {
+            "type": "header",
+            "text": {
+                "type": "plain-text",
+                "content": "踩点内容如下"
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "kmarkdown",
+                "content": "请选择："
+            }
+        }
+    ]
+
+    for i in range(0, len(locations), 3):
+        batch = locations[i:i+3]
+        elements = []
+        for loc in batch:
+            elements.append({
+                "type": "button",
+                "theme": "primary",
+                "click": "return-val",
+                "value": f"踩点选择·{loc}",
+                "text": {
+                    "type": "plain-text",
+                    "content": loc
+                }
+            })
+        modules.append({
+            "type": "action-group",
+            "elements": elements
+        })
+
+    j = [{
+        "type": "card",
+        "size": "lg",
+        "theme": "info",
+        "modules": modules
+    }]
+
+    return render(j)
