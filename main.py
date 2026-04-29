@@ -181,7 +181,7 @@ async def handle_all_messages(msg: Message):
         await msg.reply(reply_msg)
 
     elif message == "结束对戏":
-        endPlay(msg)
+        endPlay(msg.target_id)
 
 
     elif message == "更新记录":
@@ -221,7 +221,7 @@ async def handle_all_messages(msg: Message):
         # 卡片消息中的文件
         cm = CardMessage(Card(
             Module.Header(f"{pName} · 个人戏录文件"),
-            Module.File(type="file", src=file_url, title='戏录文件')
+            Module.File(type="file", src=file_url, title='戏录文件.html')
         ))
         await msg.reply(cm)
         # await msg.reply(file_url, type=MessageTypes.FILE)
@@ -249,6 +249,7 @@ async def handle_all_events(msg:Message, e:Event):
     msg_id = e.extra['body']['msg_id']
     target_id = e.extra['body']['target_id']
     user_nickname = e.extra['body']['user_info']['nickname']
+    user_nickname = user_nickname.strip()
 
     ch = await bot.client.fetch_public_channel(target_id) # 获取频道
 
@@ -555,6 +556,7 @@ def playedUpdatedRecord(message, msg=None,channel_id=None):
         logger.info(f"updated [{pname}]!")
 
 def getMsgContent(msg):
+    message = "Message Type Not 9 and 10"
     if msg.type == 9:
         message = msg.content
     elif msg.type == 10:
@@ -883,6 +885,10 @@ def acceptMinidate(mesaage,channel_id,msg_id):
         parent_id = sData['parents'][EP]
         guild_id = sData['guild_id']
 
+        # 使按钮失效
+        flag, r = disEnableButton(content,msg_id=msg_id,m="已接受")
+        if flag: r = SUCCESS +  "接受私约成功"
+
         try:
             sender_name = content.split("发起人：", 1)[1].split("接收人：", 1)[0].strip()
             recever_name = content.split("接收人：", 1)[1].split("时间：", 1)[0].strip()
@@ -902,9 +908,7 @@ def acceptMinidate(mesaage,channel_id,msg_id):
             sendMessage(recever_channel_id,telling,9)
             sendMessage(sender_channel_id,telling,9)
 
-            # 使按钮失效
-            flag, r = disEnableButton(content,msg_id=msg_id,m="已接受")
-            if flag: r = SUCCESS +  "接受私约成功"
+            
 
             # 增加个人档案记录 - senderName
             createRecord(sData['sName'],[sender_name,recever_name],sender_name,EP,created_channel_id,name)
@@ -1139,6 +1143,7 @@ def goWish(message,channel_id,recever_name,msg_id):
     sData = getsDataJsonByChannelId(channel_id)
     EP = message.split("心愿·", 1)[1].split("署名：", 1)[0].strip()
     parts = parse_kv(message, "署名：", "内容：", "时间：", "发布人：")
+    publish_name = parts["署名："]
     wish = parts["内容："]
     time = parts["时间："]
     sender_name = parts["发布人："]
@@ -1157,17 +1162,15 @@ def goWish(message,channel_id,recever_name,msg_id):
     roles.append(sData['roles'][recever_name])
     roles.append(sData['roles'][sender_name])
 
-    name = f"心愿：{sender_name}&{recever_name}"
+    name = f"心愿：{recever_name}&{sender_name}"
     created_channel_id = createChannel(guild_id, parent_id, name, roles)
 
-    telling = f"心愿已发起：(chn){created_channel_id}(chn)"
+    telling = SUCCESS + f"心愿已发起：(chn){created_channel_id}(chn)"
 
     sendMessage(recever_channel_id, telling, 9)
     sendMessage(sender_channel_id, telling, 9)
 
-
-    # disEnableWishContent = template.getWashWallDisEnableContent(disEnableContent)
-    disEnableWishContent = template.getWashWallContent(message,EP,name,wish,time,sender_name,1)
+    disEnableWishContent = template.getWashWallContent(message,EP,publish_name,wish,time,publish_name,1)
     updateMessage(msg_id,disEnableWishContent)
 
     # 增加个人档案记录 - senderName
