@@ -701,6 +701,7 @@ def deleteSeries(name,path,channel_id):
         # 5. 创建JSON文件（写入空JSON对象）
     try:
         os.remove(full_file_path)
+        os.remove(path + name + "letter.json")
         info = getChannelInfo(channel_id)
         guild_id = info['guild_id']
 
