@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from dice.onedice import RD
 
 
-def roll_dice(message):
+def roll_dice(message,user_nickname=""):
     """处理骰子指令，返回投掷结果"""
     message = message.strip()
 
@@ -54,26 +54,26 @@ def roll_dice(message):
 
         # 态度骰判定 - 根据难度判断
         if result == 1:
-            judge = "💥 大失败！"
+            judge = "✨ 大成功，自然选择，前进四！"
         elif result == 100:
-            judge = "✨ 大成功！"
+            judge = "💥 大失败……这是计划的一部分。"
         elif result <= max(1, target // 5):
-            judge = "🌟 极难成功"
+            judge = "🌟 极难成功，终一生渡世人，和终一世渡一人，都不如此刻投个成功。"
         elif result <= max(2, target // 2):
-            judge = "✅ 困难成功"
+            judge = "✅ 困难成功，Mischeief Managed."
         elif result <= target:
-            judge = "✅ 成功"
+            judge = "✅ 成功，I can do this all day."
         elif result >= 96:
-            judge = "💀 大失败！"
+            judge = "💀 大失败！一忘皆空。"
         elif result > target + (100 - target) // 5:
-            judge = "❌ 困难失败"
+            judge = "❌ 困难失败，致我们鱼死网破的胜利。"
         elif result > target:
-            judge = "⚠️ 失败"
+            judge = "⚠️ 失败，失去的东西到最后总会回到我们身边，虽然有时候出乎意料。"
         else:
-            judge = "⚠️ 失败"
+            judge = "⚠️ 失败，失去的东西到最后总会回到我们身边，虽然有时候出乎意料。"
 
         attr_str = f"{attr_name}：" if attr_name else ""
-        return f"🎲 1d100 {attr_str}目标{target}\n投掷：**{result}**\n{judge}"
+        return f"🎲 [{user_nickname}] 乾坤一掷：{result} \n {judge}"
 
     elif content.startswith('rd'):
         # .rdN 格式 - 常规骰子
@@ -90,7 +90,7 @@ def roll_dice(message):
 
         result = rd.resInt
         detail = rd.resDetail if rd.resDetail else str(result)
-        return f"🎲 {detail}\n结果：**{result}**"
+        return f"🎲 [{user_nickname}] 乾坤一掷：**{result}** *( {detail})*"
 
     elif content.startswith('r'):
         # .r3d6 格式 - 多骰常规骰
@@ -116,6 +116,6 @@ def roll_dice(message):
 
             result = rd.resInt
             detail = rd.resDetail if rd.resDetail else str(result)
-            return f"🎲 {detail}\n结果：**{result}**"
+            return f"🎲 [{user_nickname}] 乾坤一掷：**{result}** *( {detail})*"
 
     return None

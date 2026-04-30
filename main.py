@@ -125,7 +125,7 @@ async def handle_all_messages(msg: Message):
         await msg.reply(rpl_str)
 
     elif message.startswith(".") or message.startswith("．"):
-        rpl = dice_main.roll_dice(message)
+        rpl = dice_main.roll_dice(message,user_nickname)
         if rpl:
             await msg.reply(rpl)
 
