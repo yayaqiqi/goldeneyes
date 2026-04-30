@@ -124,7 +124,7 @@ async def handle_all_messages(msg: Message):
         rpl_str = json.dumps(rpl, ensure_ascii=False, indent=4)
         await msg.reply(rpl_str)
 
-    elif message.startswith(".") or message.startswith("．"):
+    elif message.startswith(".") or message.startswith("．") or message.startswith("。"):
         rpl = dice_main.roll_dice(message,user_nickname)
         if rpl:
             await msg.reply(rpl)
@@ -218,6 +218,10 @@ async def handle_all_messages(msg: Message):
     elif message.startswith("提醒回戏·"):
         sName = message.replace("提醒回戏·","").strip()
         rpl = remind(sName)
+        await msg.reply(rpl)
+
+    elif message.startswith("添加管理员·"):
+        rpl = addAdmin(message, msg)
         await msg.reply(rpl)
 
     elif message.startswith("生成戏录·"):
@@ -340,6 +344,10 @@ def sendLetters(message,msg):
     """
     sData = getsDataJsonByChannelId(msg.target_id)
     sender = msg.ctx.channel.name
+
+    # if not isAdmin(msg.author_id, sData):
+    #     return FAIL + "没有权限，需要管理员权限才能执行此操作"
+
     print(message)
     print(sender)
     print(msg.target_id)
@@ -614,10 +622,13 @@ def createSeries(message,msg):
         data = {
             "sName": name.strip(),
             "guild_id": guild_id,
+            "current_EP":"EP0",
+            "admins":["2885606149"],
             "solos":{},
             "roles":{},
             "parents":{},
-            "user_ids":{}
+            "user_ids":{},
+            "admins": [msg.author_id]
         }
         json.dump(data, f, indent=4, ensure_ascii=False)
 
@@ -892,6 +903,38 @@ def getChannelMessageList(channel_id):
     msg = json.loads(response.text)
     return msg['data']['items']
 
+
+def isAdmin(user_id, sData):
+    """检查用户是否为当前恋综的管理员"""
+    admins = sData.get('admins', [])
+    if str(user_id) in admins:
+        return True
+    return False
+
+def addAdmin(message, msg):
+    """添加管理员
+    格式：添加管理员·恋综名称 @玩家
+    """
+    contents = message.replace("添加管理员·", "").strip().split(" ")
+    if len(contents) < 2:
+        return FAIL + "格式错误：添加管理员·恋综名称 @玩家"
+
+    sName = contents[0]
+    user_id = contents[1].replace("(met)", "").strip()
+
+    flag, sData = loadData(sName)
+    if not flag:
+        return FAIL + f"找不到恋综 [{sName}]"
+
+    if 'admins' not in sData:
+        sData['admins'] = []
+
+    if user_id not in sData['admins']:
+        sData['admins'].append(user_id)
+        setData(sName, sData)
+        return SUCCESS + f"已添加管理员 [{user_id}]"
+
+    return SUCCESS + f" [{user_id}] 已是管理员"
 
 def getsDataJsonByChannelId(channel_id):
     guild_id = getChannelInfo(channel_id)['guild_id']

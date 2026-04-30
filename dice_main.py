@@ -12,11 +12,14 @@ def roll_dice(message,user_nickname=""):
     message = message.strip()
 
     # 忽略非骰子指令
-    if not (message.startswith('.r') or message.startswith('．r')):
+    # 支持 .r 、 ．r （全角句号）、 。r （中文句号）
+    if not (message.startswith('.r') or message.startswith('．r') or message.startswith('。r')):
         return None
 
     # 去除前导点号
     if message.startswith('．'):
+        message = '.' + message[1:]
+    elif message.startswith('。'):
         message = '.' + message[1:]
 
     content = message[1:]  # 去掉点号
@@ -78,9 +81,12 @@ def roll_dice(message,user_nickname=""):
     elif content.startswith('rd'):
         # .rdN 格式 - 常规骰子
         sides_str = content[2:]
-        if not sides_str.isdigit():
+        if not sides_str:
+            sides = 100  # 默认100面骰
+        elif not sides_str.isdigit():
             return None
-        sides = int(sides_str)
+        else:
+            sides = int(sides_str)
         expr = f"1d{sides}"
 
         rd = RD(expr)
