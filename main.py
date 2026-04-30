@@ -11,6 +11,7 @@ import record as R
 import template
 import template as T
 import utils
+import dice
 
 PATH = "./data/"
 
@@ -502,7 +503,7 @@ def endPlay(channel_id):
     c_name = info['name']
     names = c_name[3:].split("&")
     sName = info['guild_name']
-    reply_msg = SUCCESS + "记录已更新\n ———— **END** ————"
+    reply_msg = SUCCESS + "记录已更新\n"
     flag = False
     updatePlayRecordByChannelId(channel_id)
     for name in names:
@@ -516,6 +517,7 @@ def endPlay(channel_id):
             saveRecord(sName,name,pdata)
     if flag:
         sendMessage(channel_id,reply_msg,9)
+        sendMessage(channel_id,"————— **END** ————",9)
     return
 
 # 根据指令更新频道
@@ -858,6 +860,8 @@ def createEPChannels(message, msg):
 
         created_channel_id = createChannel(guild_id, parent_id, channel_name, roles)
         reply_messages.append(f"{channel_name} 创建成功：(chn){created_channel_id}(chn)")
+        createRecord(sData['sName'],players,players[0],ep_name,created_channel_id,channel_name)
+
     if reply_messages:
         return "\n".join(reply_messages)
     else:

@@ -2,7 +2,7 @@
     "name": "马克",
     "sName": "头颅",
     "finished": 6,
-    "groups": 11,
+    "groups": 13,
     "details": {
         "1568354809299557": {
             "is_finished": 1,
@@ -89,6 +89,24 @@
                 "观荐\n这是回戏这时回戏，这是编辑过后的字数增增+++++++++++++++++++++++++++++++++++",
                 "马克\n你好好腻阿訇活动啊发哈士大夫啊哈双打卡理发"
             ]
+        },
+        "2617675866146902": {
+            "is_finished": 0,
+            "counts": 0,
+            "last_time": "2026-04-29 23:41",
+            "current_person": "马克",
+            "channel_name": "官约：马克&观荐",
+            "EP": "EP3",
+            "content": []
+        },
+        "3977450773851094": {
+            "is_finished": 0,
+            "counts": 0,
+            "last_time": "2026-04-29 23:41",
+            "current_person": "观荐",
+            "channel_name": "踩点：观荐&马克",
+            "EP": "EP3",
+            "content": []
         }
     }
 }
