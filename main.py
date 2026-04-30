@@ -11,7 +11,7 @@ import record as R
 import template
 import template as T
 import utils
-import dice
+import dice_main
 
 PATH = "./data/"
 
@@ -123,6 +123,11 @@ async def handle_all_messages(msg: Message):
         rpl = getChannelInfo(msg.target_id)
         rpl_str = json.dumps(rpl, ensure_ascii=False, indent=4)
         await msg.reply(rpl_str)
+
+    elif message.startswith(".") or message.startswith("．"):
+        rpl = dice_main.roll_dice(message,user_nickname)
+        if rpl:
+            await msg.reply(rpl)
 
     elif message.startswith("通讯·"):
         contents = message.replace("通讯·","").strip()
