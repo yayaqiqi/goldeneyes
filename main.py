@@ -12,6 +12,8 @@ import template
 import template as T
 import utils
 import dice_main
+import random
+import re
 
 PATH = "./data/"
 
@@ -197,6 +199,13 @@ async def handle_all_messages(msg: Message):
         reply_msg = myPlayCheck(msg.target_id)
         await msg.reply(reply_msg)
 
+    elif message == "回戏档案":
+        reply_msg = unFinishedPlayCheck(msg.target_id)
+        await msg.reply(reply_msg)
+
+    elif message == "导出记录":
+        await exportChannelRecord(msg)
+
     elif message == "结束对戏":
         endPlay(msg.target_id)
 
@@ -222,6 +231,10 @@ async def handle_all_messages(msg: Message):
 
     elif message.startswith("添加管理员·"):
         rpl = addAdmin(message, msg)
+        await msg.reply(rpl)
+
+    elif message.startswith("国王游戏出题·"):
+        rpl = kingGameAssign(message, msg)
         await msg.reply(rpl)
 
     elif message.startswith("生成戏录·"):
@@ -407,14 +420,12 @@ def withdrawLetters(msg):
 
 
 def myPlayCheck(channel_id):
-    info = getChannelInfo(channel_id)
-    sName = info['guild_name']
-    pName = info['name']
 
+    sData = getsDataJsonByChannelId(channel_id)
+    sName = sData['sName']
+    pName = [k for k, v in sData['solos'].items() if v == channel_id][0]
     pData = readRecord(sName, pName)
 
-    wait_you = "当前等待你回戏的频道：\n"
-    wait_others = "当前等待他人回戏的频道：\n"
     details = pData['details']
     counts = 0
     rpl = f"Hi, {pName}, 你在 [{sName}] 的个人记录如下：\n\n"
@@ -463,6 +474,144 @@ def myPlayCheck(channel_id):
 
     reply = rpl + "\n" + f"当前共结戏 {pData['finished']} 个, 已写 {counts} 字 ❤。"
     return reply
+
+def unFinishedPlayCheck(channel_id):
+    sData = getsDataJsonByChannelId(channel_id)
+    sName = sData['sName']
+    pName = [k for k, v in sData['solos'].items() if v == channel_id][0]
+    pData = readRecord(sName, pName)
+
+    details = pData['details']
+    rpl = f"Hi, {pName}, 你在 [{sName}] 未结束的对戏如下：\n\n"
+
+    groups = {
+        "EP0": "",
+        "EP1": "",
+        "EP2": "",
+        "EP3": "",
+        "EP4": "",
+        "EP5": ""
+    }
+
+    for key in details.keys():
+        value = details[key]
+        if value['is_finished'] == 1:
+            continue  # 跳过已完成的
+
+        rounds = len(value['content'])
+        if rounds % 2 == 0:
+            msg_round = f"{int(rounds / 2)}v{int(rounds / 2)}"
+        else:
+            msg_round = f"{int(rounds // 2 + 1)}v{int(rounds // 2)}"
+
+        time = utils.calculate_now_hour_diff(value['last_time'])
+        if time <= 24:
+            logo = "🟢 "
+        elif time <= 48:
+            logo = "🟡 "
+        else:
+            logo = "🔴 "
+
+        if value['current_person'] == pName:
+            line = "\t" + f"{logo} 等你回戏，{value['channel_name']}: (chn){key}(chn) ({time}h)  *{msg_round}*\n"
+        else:
+            line = "\t" + f"🕧  等待对方回戏，{value['channel_name']}: (chn){key}(chn) ({time}h)  *{msg_round}*\n"
+
+        groups[value['EP']] += line
+
+    has_unfinished = False
+    for ep in groups.keys():
+        if groups[ep] != "":
+            has_unfinished = True
+            rpl = rpl + "**" + ep + "**\n" + groups[ep] + "\n"
+
+    if not has_unfinished:
+        return SUCCESS + "所有对戏都清啦~"
+
+    return rpl
+
+def kingGameAssign(message, msg):
+    """国王游戏出题：数字和字母组人名随机对应后替换题目"""
+    content = message.strip()
+
+    lines = content.split("\n")
+    first_line = lines[0].strip()
+
+    if not first_line.startswith("国王游戏出题·"):
+        return FAIL + "格式错误，指令：国王游戏出题·人数\n数字：角色A、角色B……\n字母：角色A、角色B……\n题目内容"
+
+    try:
+        count = int(first_line.split("·", 1)[1])
+    except:
+        return FAIL + "人数格式错误"
+
+    numbers = {}
+    letters = {}
+    questions = []
+
+    for line in lines[1:]:
+        line = line.strip()
+        if not line:
+            continue
+
+        if "数字：" in line:
+            num_part = line.split("数字：", 1)[1].strip()
+            names = [n.strip() for n in num_part.split("、") if n.strip()]
+            for i, name in enumerate(names[:count]):
+                numbers[str(i + 1)] = name
+        elif "字母：" in line:
+            letter_part = line.split("字母：", 1)[1].strip()
+            names = [n.strip() for n in letter_part.split("、") if n.strip()]
+            for i, name in enumerate(names[:count]):
+                letters[chr(65 + i)] = name
+        elif line:
+            questions.append(line)
+
+    if len(numbers) < count or len(letters) < count:
+        return FAIL + f"嘉宾人数与题目设置人数不匹配"
+
+    num_names = list(numbers.values())
+    letter_names = list(letters.values())
+    random.shuffle(letter_names)
+    random.shuffle(num_names)
+
+    num_to_name = {str(i + 1): num_names[i] for i in range(count)}
+    letter_to_name = {chr(65 + i): letter_names[i] for i in range(count)}
+
+    mapping_output = ["**数字对应：**"]
+    for i in range(count):
+        mapping_output.append(f"{i + 1} → {num_names[i]}")
+
+    mapping_output.append("\n**字母对应：**")
+    for i in range(count):
+        mapping_output.append(f"{chr(65 + i)} → {letter_names[i]}")
+
+    mapping_output.append("\n**题目匹配结果：**")
+    sData = getsDataJsonByChannelId(msg.target_id)
+    try:
+    
+        for q in questions:
+            q_text = q
+            for num, name in num_to_name.items():
+                user_id = sData['user_ids'].get(name, '')
+                q_text = replace_placeholder(q_text, num, f'(met){user_id}(met)')
+            for letter, name in letter_to_name.items():
+                user_id = sData['user_ids'].get(name, '')
+                q_text = replace_placeholder(q_text, letter, f'(met){user_id}(met)')
+            mapping_output.append(q_text)
+    except:
+        return FAIL + "请检查嘉宾姓名是否正确"
+
+    return "\n".join(mapping_output)
+
+import re
+
+# 替换时确保前后不是字母或数字
+def replace_placeholder(text, placeholder, replacement):
+    # 匹配前后有边界的占位符
+    pattern = rf'(?<![a-zA-Z0-9]){re.escape(placeholder)}(?![a-zA-Z0-9])'
+    return re.sub(pattern, replacement, text)
+
 
 def deleteErrorChannel(sName):
     sData = loadData(sName)[1]
@@ -711,7 +860,7 @@ def deleteSeries(name,path,channel_id):
             data['guilds'].pop(guild_id)
 
         setData('data',data)
-        return True,SUCCESS + f"恋综 [{name}] 已清空"
+        return True,SUCCESS + f"恋综 [{name.strip()}] 已清空"
 
 
     except Exception as e:
