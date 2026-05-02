@@ -4,85 +4,139 @@
     <meta charset="UTF-8">
     <title>头颅·观荐 - 戏录</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft YaHei,sans-serif}
-        body{background:#f7f6f3;color:#333;line-height:1.7;padding:20px;max-width:1200px;margin:0 auto}
-        .stat{background:#fff;padding:20px 30px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:30px}
-        .stat h1{font-size:24px;color:#b85b5b;margin-bottom:15px;border-left:5px solid #b85b5b;padding-left:10px}
-        .stat-info{display:flex;gap:30px;flex-wrap:wrap;font-size:16px}
-        .stat-item{padding:5px 10px;background:#f9f1f0;border-radius:6px}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:"PingFang SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,sans-serif;background:#f5f5f7;color:#1d1d1f;line-height:1.8;padding:40px 20px}
+        .container{max-width:900px;margin:0 auto}
 
-        /* 目录样式 */
-        .catalog{background:#fff;padding:20px 30px;border-radius:12px;margin-bottom:30px}
-        .catalog h2{font-size:20px;margin-bottom:15px;color:#666}
-        .catalog-main{list-style:none;margin-bottom:12px}
-        .catalog-sub{list-style:none;margin-left:20px;margin-bottom:6px;font-size:14px}
-        .catalog a{color:#b85b5b;text-decoration:none;padding:4px 8px;border-radius:4px;display:inline-block}
-        .catalog a:hover{background:#f9f1f0}
+        .header{text-align:center;margin-bottom:50px}
+        .header h1{font-size:28px;font-weight:600;color:#1d1d1f;letter-spacing:2px}
+        .header .subtitle{font-size:14px;color:#86868b;margin-top:8px}
+        .stat-bar{display:flex;justify-content:center;gap:40px;margin-top:24px}
+        .stat-item{text-align:center}
+        .stat-item .num{font-size:32px;font-weight:700;color:#0071e3}
+        .stat-item .label{font-size:12px;color:#86868b;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
 
-        .ep{font-size:22px;background:#b85b5b;color:#fff;padding:10px 20px;border-radius:8px;margin:30px 0 20px}
-        .card{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-        .card-header{border-bottom:1px solid #eee;padding-bottom:10px;margin-bottom:15px;color:#666;font-size:14px}
-        .content{white-space:pre-wrap;font-size:15px;line-height:1.9}
-        .speaker{color:#b85b5b;font-weight:bold;margin-right:8px}
-        .empty{color:#999;font-style:italic}
+        .catalog{background:#fff;border-radius:16px;padding:28px 32px;margin-bottom:32px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+        .catalog h2{font-size:16px;font-weight:600;color:#1d1d1f;margin-bottom:16px}
+        .catalog-ep{margin-bottom:12px}
+        .catalog-ep-title{font-size:14px;font-weight:600;color:#1d1d1f;margin-bottom:8px}
+        .catalog a{color:#0071e3;text-decoration:none;font-size:14px;padding:4px 10px;border-radius:6px;display:inline-block;margin:2px;background:#f5f5f7;transition:all .2s}
+        .catalog a:hover{background:#0071e3;color:#fff}
+
+        .ep-title{font-size:18px;font-weight:600;color:#fff;background:linear-gradient(135deg,#1d1d1f,#3a3a3c);padding:14px 24px;border-radius:12px;margin:36px 0 20px;letter-spacing:1px}
+
+        .card{background:#fff;border-radius:16px;padding:24px 28px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.04);transition:transform .2s}
+        .card:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.08)}
+        .card-meta{font-size:13px;color:#86868b;padding-bottom:12px;border-bottom:1px solid #f5f5f7;margin-bottom:16px;display:flex;justify-content:space-between}
+        .card-meta .channel{font-size:16px;font-weight:600;color:#1d1d1f}
+        .card-meta .status{padding:2px 8px;border-radius:4px;font-size:11px}
+        .status.done{background:#d1f7d1;color:#006600}
+        .status.active{background:#fff3cd;color:#856404}
+
+        .content{font-size:14px;color:#1d1d1f}
+        .content p{margin-bottom:8px}
+        .speaker{font-weight:600;color:#0071e3;margin-right:4px}
+        .empty{color:#86868b;font-style:italic;text-align:center;padding:20px}
+
+        .divider{height:1px;background:linear-gradient(90deg,transparent,#d2d2d7,transparent);margin:40px 0}
+
+        @media (max-width:600px){
+            body{padding:20px 12px}
+            .header h1{font-size:22px}
+            .stat-bar{gap:20px}
+            .stat-item .num{font-size:24px}
+        }
     </style>
 </head>
 <body>
-    <div class="stat">
-        <h1>头颅 · 观荐 个人记录</h1>
-        <div class="stat-info">
-            <span class="stat-item">总场次：7 场</span>
-            <span class="stat-item">总字数：1608 字</span>
+    <div class="container">
+        <div class="header">
+            <h1>观荐</h1>
+            <p class="subtitle">头颅 · 个人戏录</p>
+            <div class="stat-bar">
+                <div class="stat-item">
+                    <div class="num">9</div>
+                    <div class="label">场次</div>
+                </div>
+                <div class="stat-item">
+                    <div class="num">4141</div>
+                    <div class="label">字数</div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- 二级目录 -->
-    <div class="catalog">
-        <h2>📑 目录</h2>
-        <ul class="catalog-main"><li><a href="#EP0">📂 EP0（共1场）</a><ul class="catalog-sub"><li><a href="#play_0">· 私约：观荐&马克</a></li></ul></li></ul><ul class="catalog-main"><li><a href="#EP1">📂 EP1（共6场）</a><ul class="catalog-sub"><li><a href="#play_1">· 私约：观荐&马克</a></li><li><a href="#play_2">· 心愿：马克&观荐</a></li><li><a href="#play_3">· 心愿：马克&观荐</a></li><li><a href="#play_4">· 心愿：马克&观荐</a></li><li><a href="#play_5">· 心愿：马克&观荐</a></li><li><a href="#play_6">· 私约：陶好好&观荐</a></li></ul></li></ul>
-    </div>
-<h2 class="ep" id="EP0">EP0</h2>
-
-    <div class="card" id="play_0">
-        <div class="card-header">
-            私约：观荐&马克｜2026-03-15 16:00｜已完成
+        <div class="catalog">
+            <h2>📑 目录</h2>
+            <div class="catalog-ep"><div class="catalog-ep-title">EP0</div><div><a href="#play_0">私约：观荐&马克</a></div></div><div class="catalog-ep"><div class="catalog-ep-title">EP1</div><div><a href="#play_1">私约：观荐&马克</a><a href="#play_2">心愿：马克&观荐</a><a href="#play_3">心愿：马克&观荐</a><a href="#play_4">心愿：马克&观荐</a><a href="#play_5">心愿：马克&观荐</a><a href="#play_6">私约：陶好好&观荐</a></div></div><div class="catalog-ep"><div class="catalog-ep-title">EP3</div><div><a href="#play_7">官约：马克&观荐</a><a href="#play_8">踩点：观荐&马克</a></div></div>
         </div>
-        <div class="content">
-            <p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">马克：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p></div></div><h2 class="ep" id="EP1">EP1</h2>
+<div class="ep-title" id="EP0">EP0</div>
 
-    <div class="card" id="play_1">
-        <div class="card-header">
-            私约：观荐&马克｜2026-04-18 10:28｜已完成
-        </div>
-        <div class="content">
+        <div class="card" id="play_0">
+            <div class="card-meta">
+                <span class="channel">私约：观荐&马克</span>
+                <span class="status done">已完成</span>
+            </div>
+            <div class="content">
+            <p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">马克：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p><p><span class="speaker">观荐：</span></p><p>这是一个回戏</p></div></div><div class="ep-title" id="EP1">EP1</div>
+
+        <div class="card" id="play_1">
+            <div class="card-meta">
+                <span class="channel">私约：观荐&马克</span>
+                <span class="status done">已完成</span>
+            </div>
+            <div class="content">
             <p><span class="speaker">观荐：</span></p><p>这里窗明几净，一大摊一大摊的血消失不见，好像确实只是一场梦，虽然让人有些积食，头脑逐渐消化不良，盖琪忍不住想，那个时候一定很痛，刀刃割开皮肤和脂肪层，抵达里面的内脏，眼前这张木桌也是，布满七歪八扭的口子。刀片的厚度可以影响疼痛程度，她见过周围人不停用各种各样的东西来代替刀，结果差强人意，竟然都没昨晚的梦结束得干脆利落。盖琪的脸庞几乎没有血色，阳光晒下来贯穿其中，变得和薄薄的菜单纸一样，能够轻易被掀开，所以看不见多余的神情，她眼睛晃动得不安，从对面那张不能说熟悉但确实出现过的脸，摇摇欲坠回到菜单，“抱歉——”盖琪下意识地、习惯性地讲出这两个字，“我不能喝咖啡，暂时不用吃东西。”</p><p><span class="speaker">马克：</span></p><p>阳光透过玻璃窗斜斜切进来，落在木质桌面上，铺成一片暖而浅的光斑，尘埃在光里轻轻浮动，慢得像一场没醒透的梦。看到盖琪的第一眼，沈第汶在想什么呢？很难形如这种感觉，那好像一种奇异的恍惚，隔着一层朦胧的迷雾，雾的那端，是另一个和自己长得一模一样的人，他握着刀，金属的冷光映出判若两人的疯狂。</p><p>人在尴尬的时候，会选择让自己忙起来，沈第汶下意识起身，伸手替盖琪拉开对座的凳子，又起来菜单，把菜单翻得哗啦啦响——毕竟在昨夜的梦里，他们刚刚对彼此挥刀相向。而时间线再往前推一点，他们之间的关系勉强可以称之为——吃过一顿饭的陌生人。</p><p>“你好。”沈第汶有些局促地说，那不是一段好梦。“想喝什么？”</p><p><span class="speaker">观荐：</span></p><p>这是回戏</p><p><span class="speaker">马克：</span></p><p>我回我回我回</p><p><span class="speaker">观荐：</span></p><p>这里窗明几净，一大摊一大摊的血消失不见，好像确实只是一场梦，虽然让人有些积食，头脑逐渐消化不良，盖琪忍不住想，那个时候一定很痛，刀刃割开皮肤和脂肪层，抵达里面的内脏，眼前这张木桌也是，布满七歪八扭的口子。刀片的厚度可以影响疼痛程度，她见过周围人不停用各种各样的东西来代替刀，结果差强人意，竟然都没昨晚的梦结束得干脆利落。盖琪的脸庞几乎没有血色，阳光晒下来贯穿其中，变得和薄薄的菜单纸一样，能够轻易被掀开，所以看不见多余的神情，她眼睛晃动得不安，从对面那张不能说熟悉但确实出现过的脸，摇摇欲坠回到菜单，“抱歉——”盖琪下意识地、习惯性地讲出这两个字，“我不能喝咖啡，暂时不用吃东西。”</p><p><span class="speaker">马克：</span></p><p>阳光透过玻璃窗斜斜切进来，落在木质桌面上，铺成一片暖而浅的光斑，尘埃在光里轻轻浮动，慢得像一场没醒透的梦。看到盖琪的第一眼，沈第汶在想什么呢？很难形如这种感觉，那好像一种奇异的恍惚，隔着一层朦胧的迷雾，雾的那端，是另一个和自己长得一模一样的人，他握着刀，金属的冷光映出判若两人的疯狂。</p><p>人在尴尬的时候，会选择让自己忙起来，沈第汶下意识起身，伸手替盖琪拉开对座的凳子，又起来菜单，把菜单翻得哗啦啦响——毕竟在昨夜的梦里，他们刚刚对彼此挥刀相向。而时间线再往前推一点，他们之间的关系勉强可以称之为——吃过一顿饭的陌生人。</p><p>“你好。”沈第汶有些局促地说，那不是一段好梦。“想喝什么？”</p><p><span class="speaker">观荐：</span></p><p>这是回戏</p><p><span class="speaker">马克：</span></p><p>我回我回我回</p></div></div>
-    <div class="card" id="play_2">
-        <div class="card-header">
-            心愿：马克&观荐｜2026-03-10 23:21｜已完成
-        </div>
-        <div class="content">
+        <div class="card" id="play_2">
+            <div class="card-meta">
+                <span class="channel">心愿：马克&观荐</span>
+                <span class="status done">已完成</span>
+            </div>
+            <div class="content">
             <p class="empty">暂无戏录内容</p></div></div>
-    <div class="card" id="play_3">
-        <div class="card-header">
-            心愿：马克&观荐｜2026-03-10 23:26｜已完成
-        </div>
-        <div class="content">
+        <div class="card" id="play_3">
+            <div class="card-meta">
+                <span class="channel">心愿：马克&观荐</span>
+                <span class="status done">已完成</span>
+            </div>
+            <div class="content">
             <p class="empty">暂无戏录内容</p></div></div>
-    <div class="card" id="play_4">
-        <div class="card-header">
-            心愿：马克&观荐｜2026-03-15 16:03｜已完成
-        </div>
-        <div class="content">
+        <div class="card" id="play_4">
+            <div class="card-meta">
+                <span class="channel">心愿：马克&观荐</span>
+                <span class="status done">已完成</span>
+            </div>
+            <div class="content">
             <p><span class="speaker">观荐：</span></p><p>这是一段回戏</p><p><span class="speaker">马克：</span></p><p>这是回戏2</p><p><span class="speaker">观荐：</span></p><p>这是一段回戏</p><p><span class="speaker">马克：</span></p><p>这是回戏2</p></div></div>
-    <div class="card" id="play_5">
-        <div class="card-header">
-            心愿：马克&观荐｜2026-03-15 16:03｜已完成
-        </div>
-        <div class="content">
+        <div class="card" id="play_5">
+            <div class="card-meta">
+                <span class="channel">心愿：马克&观荐</span>
+                <span class="status done">已完成</span>
+            </div>
+            <div class="content">
             <p><span class="speaker">观荐：</span></p><p>这是回戏这时回戏</p><p><span class="speaker">马克：</span></p><p>你好好腻阿訇活动啊发哈士大夫啊哈双打卡理发</p><p><span class="speaker">观荐：</span></p><p>这是回戏这时回戏</p><p><span class="speaker">马克：</span></p><p>你好好腻阿訇活动啊发哈士大夫啊哈双打卡理发</p><p><span class="speaker">观荐：</span></p><p>这是回戏这时回戏，这是编辑过后的字数增增+++++++++++++++++++++++++++++++++++</p><p><span class="speaker">马克：</span></p><p>你好好腻阿訇活动啊发哈士大夫啊哈双打卡理发</p><p><span class="speaker">观荐：</span></p><p>这是回戏这时回戏，这是编辑过后的字数增增+++++++++++++++++++++++++++++++++++</p><p><span class="speaker">马克：</span></p><p>你好好腻阿訇活动啊发哈士大夫啊哈双打卡理发</p><p><span class="speaker">观荐：</span></p><p>这是回戏这时回戏，这是编辑过后的字数增增+++++++++++++++++++++++++++++++++++</p><p><span class="speaker">马克：</span></p><p>你好好腻阿訇活动啊发哈士大夫啊哈双打卡理发</p></div></div>
-    <div class="card" id="play_6">
-        <div class="card-header">
-            私约：陶好好&观荐｜2026-04-16 20:38｜进行中
-        </div>
-        <div class="content">
-            <p class="empty">暂无戏录内容</p></div></div></body></html>
+        <div class="card" id="play_6">
+            <div class="card-meta">
+                <span class="channel">私约：陶好好&观荐</span>
+                <span class="status active">进行中</span>
+            </div>
+            <div class="content">
+            <p class="empty">暂无戏录内容</p></div></div><div class="ep-title" id="EP3">EP3</div>
+
+        <div class="card" id="play_7">
+            <div class="card-meta">
+                <span class="channel">官约：马克&观荐</span>
+                <span class="status done">已完成</span>
+            </div>
+            <div class="content">
+            <p><span class="speaker">马克：</span></p><p>皆若空游无所依，这是吴育吟看见北海公园的第一印象。碧色的湖面在天的映照下已然变得透明，像在地平线以下颤动的一面镜子，公正地反射出头顶所有绿的叶子、白的云朵、蓝的天幕，它是一个合集。然而感情的合集总是不能只寄存在一个人身上，吴育吟想起她和沈第汶第一次遇见的时候也是在这样流动的水带旁，她是体面完整的旁观者、沈第汶却因为伟大的援助而浑身湿透——或许从那时起就注定他们没有一起分担寒冷的缘分，却同样也有不能共享太阳的永远。吴育吟的心肠时常软硬兼施，在刚刚来到这里的时候，她曾像现在这样无穷坚毅地将你往外推，用他者的口吻为你写下介绍信，中间眷恋地回温，最后还是没跟上季节变暖的步伐。她坐在湖旁边的长椅上，头发松松垮垮地挽起来，没有东西能够再遮掩脸颊和表情，“如果你想，基金应该还是可以更改拥有者的吧？”吴育吟叹了口气，“如果我勇敢往前走的代价是和你分开，你会后悔那天这样向我提议吗？”</p><p><span class="speaker">观荐：</span></p><p>无国界医生有不成文的规定：你来了，你走了，他们继续活着，或者死去，你不能带着他们走，否则你走不下去。</p><p>这是应对别离的法则，他早就知道这一点，他以前做的很好，这次只是需要一点点时间。</p><p>初春的北海足够美，风荡过青碧色的湖光，对岸白塔青山含黛，白塔静立。很美很美，美到大概会在记忆里永远占据一角。</p><p>沈第汶戴着墨镜，宽大的墨镜遮住了1/3的面部表情。他第给你一杯苹果定律的热拿铁，自己掌心也捧着一杯，热气袅袅地向上升起，又在风里无声无息地飘散。"没有，这很好。"他顿了顿，心轻轻地被扯了一下，"这样很好。"他重复。人生互助会在这里给他编制过一段短暂幸福的美梦，连带着北京这样一个曾经没有颜色的城市都在他的记忆里变得鲜活生动起来。而现在，梦应该醒了。沈第汶想，有的时候我们赞美、怀念、期盼美梦，并不是说真实的人生不好，只是对梦里的人饱含深切的爱意和祝福。"最后还是你答的题，这张卷子，你做的比我好，我有的时候会怀疑是不是自己不够努力，没有争取到最后一刻，但是在错误的方向上努力是没有不会有好结果的，对吧？吴育吟。"他轻轻吸了口气，"所以我不后悔，那可能是我来这里后说的最正确的话了。"</p><p>"基金可以转，但没有必要，除非你不想要，你是最合适的拥有者，如果以后有不知道怎么做的，可以随时来问我。"他的声音重新恢复到温润平和，一如初见。</p><p><span class="speaker">马克：</span></p><p>她伸手接过咖啡，醇厚的香气就顺着掀开的盖口往上冒，这和她惯常饮用的花茶实在是颇为不同的口感。在用枯枝树叶打理出一团烤火烹煮茶叶的时候，吴育吟未尝不是在红墙绿瓦、小桥流水之间打理寂寞，在岁月翻飞的裙摆之间安静地享用孤独。其实她并不是个热衷热闹的人，却在那一天围拢的人群之中破天荒驻足，她爱上沈第汶的那一眼，湿答答的水珠顺着他的发尾淌进领口，石破天惊的这一秒，她知道自己爱上的是你慈悲为怀的那双手臂，至少在当下那个瞬间，她为你奋不顾身的决心痴迷。而后在亲密关系里我们读遍了温情的字眼，她却变成了和你梦想两相对冲的存在。她开始苛责你的无私，开始陷入埋怨的怪圈不可自拔，直到现在，她还不能和那些恨和不甘完成释怀。斤斤计较的吴育吟想她一定做错了事，正如沈第汶所说，倘若她肯早一点说出口，不把那些自以为体贴的温柔挥霍到泛滥，也许你们来北京的这一天就该是艳阳高照、情比金坚，而不是被卷进一场命运咬着命运的互助会。但人不能永远往后看，譬如现在你们都在青山绿水的环抱里体面地留住阳光。“我从开始就想错了，感情本来就是两个人的事情。”无论是修复、挽救还是弥补，从来都是需要两个人一起计较得失，只有决心分开的时候才可以一个人一声不吭地完成整理。“好，那我会努力学的。”她还说不出口自己不爱你，却也说不出口自己真的在你们之间摆进了过去的命运，不止于此，新的一切把所有都掼碎了。吴育吟克制悲伤的唇尾在轻轻发抖，她想她不能哭，不是因为耻于软弱，而是她想越面目全非越能让沈第汶抽离得心安理得，所以吴育吟说：“其实我们本来可以分开得更早一点的。”在她在电话里和你歇斯底里的时候，在她为你写下不伦不类的介绍信的时候，在她没有答对你的两真一假的时候，在她告诉你她不可以把过去只当作过去的时候……吴育吟早就想好了九十九种退出你人生的方式，偏偏是那百分之一的犹豫拉扯了她不肯罢休的爱，把它又茁壮地喂养一遍，扭曲地绕住你们的手腕。而今它可悲地气数已尽，外壳碎了，里面的东西又藏回她的心，变成三月北京最后关于你们的秘密。</p><p><span class="speaker">观荐：</span></p><p>“或许你自己都没有发现，其实你一直很勇敢，从（毕业典礼）那个吻、南苏丹回来后的那次接机开始。”没有人比他更清楚，没有那些温柔坚定的开始，沈第汶不会有勇气迈出那一步，也就不会拥有后来欢喜与热烈的一切。时至今日此刻，那些耳鬓厮磨、并肩漫步的时光，依旧是他心底最柔软的角落，是会被岁月妥善安放的珍宝。现在开始忘记吧——那些歇斯底里的争执、撕心裂肺的悲伤，好像都在时间的冲刷里，慢慢淡成模糊的影子。现在决心忘记，现在必须忘记。人都有自我防御的保护机制，沈第汶有，他希望吴育吟也是。无论是明天，后天，大后天，无论多少年后，当你想起或见到沈第汶的时候，他希望你别再想起那些深夜里独自吞咽的孤独，别再想起那些辗转反侧得到愤恨与不甘，那些失眠的，告白的夜晚，通通都忘记。只需要记得那些安静的、美好的夕阳、天空、雪、和樱花。</p><p>对吧，我们曾经有那么多快乐温馨的回忆，甚至到了被激烈的爱与恨的情绪纠缠的互助会也是如此。“这三年，我很幸福，那个时候，我是真的想和你结婚，也认真考虑过，要不要放弃关于无国界医生的一切。”这从来不是一个容易的决定，甚至不是一个容易得念头，因为做下这个决定后谁内确保多年后午夜梦回的沈第汶，不会埋怨那个为了你放弃梦想的自己。可是我还是需要告诉你：“和你说这些并不是挽留，只是想告诉你，吴育吟，你有让人幸福的能力，也值得被温柔以待，值得拥有满心欢喜的幸福。”</p><p>“这些年，让你独自承受那么多孤独和痛苦我很抱歉，我没想到会这样。我还要收回前天话，那是气话，我相信会有比现在更健康、更幸福的生活在等你。我也是。”他用尽全力在嘴角勾起一个弧度，然后抬头仰望天空，无垠澄澈的蓝天在头顶铺展开来，一架白色的飞机缓缓划过，身后拖着一道细长的白痕，慢慢变淡，变浅，最终没入看不见的云端。</p></div></div>
+        <div class="card" id="play_8">
+            <div class="card-meta">
+                <span class="channel">踩点：观荐&马克</span>
+                <span class="status active">进行中</span>
+            </div>
+            <div class="content">
+            <p class="empty">暂无戏录内容</p></div></div>
+        <div class="divider"></div>
+    </div>
+</body>
+</html>
