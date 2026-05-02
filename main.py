@@ -869,6 +869,9 @@ def deleteSeries(name,path,channel_id):
 def bindSolo(message,group_id):
     contents = message.replace("绑定·", "").strip().split(" ")
     logger.info(contents)
+    if len(contents) != 4:
+        return False, FAIL + f"操作失败，请检查信息之间是否有超过1个空格。个人频道绑定格式：绑定·恋综名称 角色名称 @玩家账号 @角色组"
+
     try:
         sName, pName,user_id,role_id = contents[0], contents[1].strip(),contents[2].strip(), contents[3].strip()
     except Exception as e:
@@ -883,6 +886,9 @@ def bindSolo(message,group_id):
         return False, FAIL + "绑定失败，代号词已重复"
     elif group_id in sData['solos'].values():
         return False,FAIL + "绑定失败，当前频道已绑定，若续更换绑定词，格式：移除绑定·恋综。"
+    
+    if "met" not in user_id or "rol" not in role_id:
+        return False, FAIL + f"操作失败，玩家账号或角色组识别错误"
 
     user_id = user_id.strip().replace("(met)", "")
     role_id = role_id.strip().replace("(rol)", "")
@@ -1537,18 +1543,3 @@ def publicNote(message,msg):
 if __name__ == '__main__':
     print("bot run")
     bot.run()
-
-    # elif msg.type == 10:
-    #     await msg.reply("10")
-    #
-    #     contents = json.loads(msg.content)
-    #     modules = contents[0]['modules']
-    #     # print(contents)
-    #     for m in modules:
-    #         print(m)
-    #
-    #         img_src = m['elements'][0]['src']
-    #         print(img_src)
-    #         cm_json = T.getImgTemplate(img_src)
-    #         await  msg.reply(cm_json,type=MessageTypes.CARD)
-    # # else:

@@ -2,16 +2,6 @@
     "name": "陶好好",
     "sName": "头颅",
     "finished": 0,
-    "groups": 1,
-    "details": {
-        "9425101802691471": {
-            "is_finished": 0,
-            "counts": 0,
-            "last_time": "2026-04-16 20:38",
-            "current_person": "陶好好",
-            "channel_name": "私约：陶好好&观荐",
-            "EP": "EP1",
-            "content": []
-        }
-    }
+    "groups": 0,
+    "details": {}
 }
