@@ -26,3 +26,15 @@ def calculate_now_hour_diff(time_str1,floor=True):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     return calculate_hour_diff(time_str1,now,floor)
 
+def calculate_now_hour_diff_by_timestamp(timestamp_ms, floor=True):
+    """计算当前时间与时间戳（毫秒）的时间差，返回小时数"""
+    # 时间戳转换为datetime
+    timestamp_s = timestamp_ms / 1000  # 毫秒转秒
+    record_time = datetime.datetime.fromtimestamp(timestamp_s)
+    now = datetime.datetime.now()
+
+    hour_diff = (now - record_time).total_seconds() / 3600
+    if floor:
+        hour_diff = int(hour_diff)
+    return hour_diff
+
