@@ -1,3 +1,4 @@
+from sys import path
 from turtle import goto
 from khl import Bot, Message, MessageTypes, Event, EventTypes
 from khl.card import Card, CardMessage, Module, Types, Element, Struct
@@ -180,7 +181,7 @@ async def handle_all_messages(msg: Message):
         await msg.reply(rpl)
 
     elif message == "发送心动信123":
-        systemSendGift(msg)
+        systemSendLetters(msg)
 
     elif message.startswith("添加记录·"):
         sData = getsDataJsonByChannelId(msg.target_id)
@@ -231,6 +232,18 @@ async def handle_all_messages(msg: Message):
 
     elif message.startswith("添加管理员·"):
         rpl = addAdmin(message, msg)
+        await msg.reply(rpl)
+
+    elif message.startswith("移除管理员·"):
+        rpl = removeAdmin(message, msg)
+        await msg.reply(rpl)
+
+    elif message == "统计":
+        rpl = getStatistics(msg)
+        await msg.reply(rpl)
+
+    elif message.startswith("折手指·"):
+        rpl = await handleFingerGame(message, msg)
         await msg.reply(rpl)
 
     elif message.startswith("国王游戏出题·"):
@@ -360,10 +373,7 @@ def sendLetters(message,msg):
 
     # if not isAdmin(msg.author_id, sData):
     #     return FAIL + "没有权限，需要管理员权限才能执行此操作"
-
-    print(message)
-    print(sender)
-    print(msg.target_id)
+    logger.info(f"SendLeter: message={message}")
     if ("收信人：" in message
             and "发信人：" in message
             and "内容：" in message):
@@ -374,7 +384,6 @@ def sendLetters(message,msg):
         content = parts["内容："]
 
         names = sData['solos'].keys()
-        print(names)
         if recever_name not in names:
             return FAIL + "收信人错误，请检查格式后重新输入！"
 
@@ -631,7 +640,7 @@ def deleteErrorChannel(sName):
 def timeoutEndPlay(sName):
     sData = loadData(sName)[1]
     names = sData['solos']
-    rpl = ""
+    rpl_list = []
     for name in names:
         precord = readRecord(sName,name)
         channels = precord['details'].keys()
@@ -640,25 +649,33 @@ def timeoutEndPlay(sName):
             time = info['last_time']
             diff = utils.calculate_now_hour_diff(time)
             if diff > 72 and info['is_finished']==0:
-                rpl += channel_id + "\n"
+                rpl_list.append(f"{info['EP']} (chn){channel_id}(chn) 已超时，强结。")
                 endPlay(channel_id)
-        # saveRecord(sName,name,precord)
-    return SUCCESS
+    return SUCCESS + "执行完成\n" + "\n".join(rpl_list)
 
 def remind(sName):
     sData = loadData(sName)[1]
     names = sData['solos']
+
+    remind_list = []
     for name in names:
         precord = readRecord(sName,name)
         channels = precord['details'].keys()
         for channel_id in channels:
             info = precord['details'][channel_id]
+            if info['is_finished'] == 1 or name != info['current_person']: continue
             time = info['last_time']
             diff = utils.calculate_now_hour_diff(time)
-            if diff > 24 and name==info['current_person'] and info['is_finished']==0:
-                sendMessage(channel_id,f"(met){sData['user_ids'][name]}(met)",9)
-        # saveRecord(sName,name,precord)
-    return SUCCESS
+            if diff >= 24:
+                latest_msg = getLatestMessage(channel_id)[0]
+                if len(latest_msg['mention']) > 0:
+                    last_mention_time = latest_msg['create_at']
+                    diff_latest_mention = utils.calculate_now_hour_diff_by_timestamp(last_mention_time)
+                    if diff_latest_mention > 12:
+                        sendMessage(channel_id,f"(met){sData['user_ids'][name]}(met)",9)
+                remind_list.append(f"{info['EP']} (chn){channel_id}(chn) 已提醒,*{name} ({diff}h)*")
+                    
+    return SUCCESS + "提醒完成，12小时内提醒过不会重复提醒。\n" + "\n".join(remind_list)
 
 def endPlay(channel_id):
     info = getChannelInfo(channel_id)
@@ -763,7 +780,6 @@ def createSeries(message,msg):
     if os.path.exists(full_file_path):
         return False,FAIL +  f"创建失败，{filename}已存在，避免重复创建！请先清空旧文件再创建。清空格式：清空·恋综名称"
 
-    # try:
     info = getChannelInfoNotRegisted(msg.target_id)
     guild_id = info['guild_id']
 
@@ -792,9 +808,6 @@ def createSeries(message,msg):
     if flag: return True,SUCCESS + f"恋综 [{name}] 创建成功"
     return flag,msg
 
-    # except Exception as e:
-    #     print(e)
-    #     return False,f"操作失败:{e}"
 
 def getChannelInfo(channel_id):
 
@@ -813,6 +826,20 @@ def getChannelInfo(channel_id):
         'name':msg['name']
     }
     return rpl
+
+def getChannelListByParentId(guild_id,parent_id):
+    params = {
+        "guild_id":guild_id,
+        "parent_id":parent_id
+    }
+    response = requests.get(url + "/v3/channel/list", headers=bk_header,params=params)
+    msg = json.loads(response.text)
+    try:
+        r = msg['data']['items']
+    except:
+        logger.error(msg)
+        r = []
+    return r
 
 def getChannel(channel_id):
     params = {
@@ -1060,6 +1087,15 @@ def getChannelMessageList(channel_id):
     return msg['data']['items']
 
 
+def getLatestMessage(channel_id):
+    params = {
+        "target_id": channel_id,
+        "page_size": 1
+    }
+    response = requests.get(url + "/v3/message/list", headers=bk_header, params=params)
+    msg = json.loads(response.text)
+    return msg['data']['items']
+
 def isAdmin(user_id, sData):
     """检查用户是否为当前恋综的管理员"""
     admins = sData.get('admins', [])
@@ -1076,7 +1112,7 @@ def addAdmin(message, msg):
         return FAIL + "格式错误：添加管理员·恋综名称 @玩家"
 
     sName = contents[0]
-    user_id = contents[1].replace("(met)", "").strip()
+    user_ids = [c.replace("(met)", "").strip() for c in contents[1:] if c.strip()]
 
     flag, sData = loadData(sName)
     if not flag:
@@ -1085,12 +1121,114 @@ def addAdmin(message, msg):
     if 'admins' not in sData:
         sData['admins'] = []
 
-    if user_id not in sData['admins']:
-        sData['admins'].append(user_id)
-        setData(sName, sData)
-        return SUCCESS + f"已添加管理员 [{user_id}]"
+    added = []
+    already = []
+    for user_id in user_ids:
+        if user_id not in sData['admins']:
+            sData['admins'].append(user_id)
+            added.append(user_id)
+        else:
+            already.append(user_id)
 
-    return SUCCESS + f" [{user_id}] 已是管理员"
+    if added:
+        setData(sName, sData)
+    result = []
+    if added:
+        result.append(f"已添加：{'、'.join(added)}")
+    if already:
+        result.append(f"已是管理员：{'、'.join(already)}")
+    return SUCCESS + "操作完成\n" + "\n".join(result)
+
+def removeAdmin(message, _msg):
+    """移除管理员
+    格式：移除管理员·恋综名称 @玩家
+    """
+    contents = message.replace("移除管理员·", "").strip().split(" ")
+    if len(contents) < 2:
+        return FAIL + "格式错误：移除管理员·恋综名称 @玩家"
+
+    sName = contents[0]
+    user_ids = [c.replace("(met)", "").strip() for c in contents[1:] if c.strip()]
+
+    flag, sData = loadData(sName)
+    if not flag:
+        return FAIL + f"找不到恋综 [{sName}]"
+
+    if 'admins' not in sData:
+        return FAIL + f"[{sName}] 没有管理员"
+
+    removed = []
+    not_found = []
+    for user_id in user_ids:
+        if user_id in sData['admins']:
+            sData['admins'].remove(user_id)
+            removed.append(user_id)
+        else:
+            not_found.append(user_id)
+
+    if removed:
+        setData(sName, sData)
+
+    result = []
+    if removed:
+        result.append(f"已移除：{'、'.join(removed)}")
+    if not_found:
+        result.append(f"非管理员：{'、'.join(not_found)}")
+
+    return SUCCESS + "操作完成\n" + "\n".join(result)
+
+def getStatistics(msg):
+    """统计恋综整体情况"""
+    channel_id = msg.target_id
+    user_id = msg.author_id
+
+    sData = getsDataJsonByChannelId(channel_id)
+    if not isAdmin(user_id, sData):
+        return FAIL + "仅管理员可使用此功能"
+
+    sName = sData['sName']
+    guild_id = sData['guild_id']
+    parents = sData.get('parents', {})
+
+    lines = [f"**[{sName}] 数据统计**\n"]
+
+    # 按 EP 分别统计
+    ep_stats = {}
+    totals = {"私约": 0, "踩点": 0, "心愿": 0}
+
+    for parent_name, parent_id in parents.items():
+        if parent_name == '通讯':
+            continue
+        channels = getChannelListByParentId(guild_id, parent_id)
+        ep_stats[parent_name] = { "私约": 0, "踩点": 0, "心愿": 0}
+
+        for ch in channels:
+            ch_name = ch.get('name', '')
+            if '：' in ch_name:
+                category = ch_name.split('：')[0]
+                if category in ep_stats[parent_name]:
+                    ep_stats[parent_name][category] += 1
+                    totals[category] += 1
+
+    # 输出每个 EP 的统计
+    for ep_name in sorted(ep_stats.keys()):
+        stats = ep_stats[ep_name]
+        parts = f"**{ep_name}** : "
+        for cat, count in stats.items():
+            if count > 0:
+                parts += f" {cat}： {count} |"
+        if parts.endswith('|'):
+            parts = parts[:-1]
+        lines.append(parts)
+
+    # 输出汇总
+    lines.append("\n**汇总**")
+    summary_parts = [f"{k}： {v}" for k, v in totals.items() if v > 0]
+    lines.append(" | ".join(summary_parts))
+    wechat_channels_items = getChannelListByParentId(sData['guild_id'],sData['parents']['通讯'])
+    lines.append(f"通讯：{len(wechat_channels_items)}")
+
+    return "\n".join(lines)
 
 def getsDataJsonByChannelId(channel_id):
     guild_id = getChannelInfo(channel_id)['guild_id']
@@ -1265,16 +1403,24 @@ def noteTo(message, channel_id):
     try:
         content = message.replace("To","").strip().split(" ",1)
         toName, note = content[0].strip(), content[1].strip()
-        sender = getChannelInfo(channel_id)['name']
 
         sData = getsDataJsonByChannelId(channel_id)
+
+        # 从 solos 中获取与该频道值匹配 value 对应的 key 作为发送者
+        sender = None
+        for name, ch_id in sData.get('solos', {}).items():
+            if ch_id == channel_id:
+                sender = name
+                break
+        if not sender:
+            return False,channel_id,FAIL + "当前频道错误，非个人频道，无法获取发送者"
 
     except Exception as e:
         logger.error(e)
         return False, channel_id, "To角色名称 这里是纸条内容"
 
     if toName not in sData['solos']:
-        return False,channel_id, f"[{toName}] 不存在，请检查或联系管理员"
+        return False,channel_id, FAIL + f"[{toName}] 不存在，请检查或联系管理员"
 
     c = template.getNoteTemplate(note, sender, toName)
     toChannelId = sData['solos'][toName]
@@ -1323,7 +1469,7 @@ def sendGift(message,msg):
     sendMessage(toChannelId,c,10)
     return True, SUCCESS + "礼物发送成功！"
 
-def systemSendGift(msg):
+def systemSendLetters(msg):
     sData = getsDataJsonByChannelId(msg.target_id)
     letter_file = sData['sName'] + "letter"
     letter_path = os.path.join(PATH, letter_file + ".json")
@@ -1340,7 +1486,7 @@ def systemSendGift(msg):
             target_id = sData['solos'][recever_name]
             sendMessage(target_id,c,10)
 
-        sendMessage(msg.target_id,f"信 from {key} 已发送",9)
+        sendMessage(msg.target_id,f"信 from {key} 已发送, 共{len(letters)}封。",9)
     sendMessage(msg.target_id, SUCCESS + f"发送完毕， 共{cnt}封。",9)
 
     if cnt == 0:
@@ -1499,6 +1645,261 @@ def getCaidianInfo(channel_id):
             result.append(f"- {loc}：（暂无）")
 
     return "\n".join(result)
+
+async def handleFingerGame(message, msg):
+    """统一处理折手指系列指令"""
+    content = message.replace("折手指·", "").strip()
+
+    if content.startswith("新建"):
+        return createFingerGame(content,msg.target_id)
+
+    elif content == "查看":
+        return viewFingerGame(msg.target_id)
+
+    elif content == "查看本轮":
+        return viewCurrentRound(msg.target_id)
+
+    elif content == "结束":
+        return await endFingerGame(msg.target_id, msg)
+
+    else:
+        parts = content.split("·")
+        if len(parts) < 2:
+            return FAIL + "格式错误，折手指指令格式：\n折手指·新建\n折手指·角色名·出题·经历描述\n折手指·角色名·折/不折·题号"
+
+        player_name = parts[0].strip()
+        action = parts[1].strip()
+        param = parts[2].strip() if len(parts) > 2 else ""
+
+        if action == "出题":
+            return askFingerQuestion(player_name, param, msg.target_id)
+        elif action in ("折", "不折"):
+            round_num = param if param else ""
+            return answerFingerQuestion(player_name, action, round_num, msg.target_id)
+
+        return FAIL + "未知操作，支持：出题、折、不折"
+
+def createFingerGame(message,channel_id):
+    """创建折手指游戏，从 solos 获取玩家"""
+    sData = getsDataJsonByChannelId(channel_id)
+    InitFingerCounts = message.replace("新建", "").strip()
+    if InitFingerCounts.isdigit():
+        InitFingerCounts = int(InitFingerCounts)
+    else:
+        InitFingerCounts = 12
+    players = list(sData.get('solos', {}).keys())
+
+    if len(players) < 2:
+        return FAIL + "游戏需要至少2名玩家，请先绑定角色"
+
+    
+    game_file = f"./data/finger_game/{channel_id}.json"
+    if os.path.exists(game_file):
+        return FAIL + "当前游戏尚未结束，请先结束游戏"
+    os.makedirs("./data/finger_game", exist_ok=True)
+    game_data = {
+        "sName": sData['sName'],
+        "game_id": channel_id,
+        "players": players,
+        "fingers": {p: InitFingerCounts for p in players},
+        "status": {p: "active" for p in players},
+        "current_round": 0,
+        "questions": {},
+        "all_folded_count": 0
+    }
+
+    with open(game_file, 'w', encoding='utf-8') as f:
+        json.dump(game_data, f, indent=4, ensure_ascii=False)
+    
+    return SUCCESS + f"折手指游戏创建成功！\n玩家：{'、'.join(players)}\n初始手指数：{InitFingerCounts}根"
+
+def getFingerGameData(channel_id):
+    """获取当前游戏数据"""
+    game_file = f"./data/finger_game/{channel_id}.json"
+    if not os.path.exists(game_file):
+        return None, None
+    with open(game_file, 'r', encoding='utf-8') as f:
+        game_data = json.load(f)
+    return game_data, game_file
+
+def saveFingerGameData(game_data, game_file):
+    """保存游戏数据"""
+    with open(game_file, 'w', encoding='utf-8') as f:
+        json.dump(game_data, f, indent=4, ensure_ascii=False)
+
+def askFingerQuestion(player_name, question, channel_id):
+    """出题"""
+    game_data, game_file = getFingerGameData(channel_id)
+    if not game_data:
+        return FAIL + "暂无进行中的游戏，请先创建：折手指·新建"
+
+    if player_name not in game_data['players']:
+        return FAIL + f"玩家 [{player_name}] 不在游戏中，请检查角色名"
+
+    game_data['current_round'] += 1
+    round_num = str(game_data['current_round'])
+    game_data['questions'][round_num] = {
+        "text": question,
+        "asker": player_name,
+        "answers": {}
+    }
+    saveFingerGameData(game_data, game_file)
+
+    lines = [f"**【折手指 · 第{round_num}题】**\n"]
+    lines.append(f"**{player_name}** ：")
+    lines.append(f"{question}\n")
+    lines.append(f"\n请其他玩家回复：折手指·姓名·折/不折·题{round_num}")
+
+    return "\n".join(lines)
+
+def answerFingerQuestion(player_name, answer, round_num, channel_id):
+    """回答问题"""
+    game_data, game_file = getFingerGameData(channel_id)
+    if not game_data:
+        return FAIL + "暂无进行中的游戏"
+
+    if player_name not in game_data['players']:
+        return FAIL + f"玩家 [{player_name}] 不在游戏中"
+
+    if game_data['status'][player_name] == "out":
+        return FAIL + f"玩家 [{player_name}] 已出局"
+
+    if not round_num:
+        round_num = str(game_data['current_round'])
+    else:
+        round_num = round_num.replace("题", "")
+
+    if round_num not in game_data['questions']:
+        return FAIL + f"第{round_num}题不存在"
+
+    question_data = game_data['questions'][round_num]
+
+    if player_name in question_data['answers']:
+        old_answer = question_data['answers'][player_name]
+        return FAIL + f"你已在第{round_num}题回答过 [{old_answer}]，无法重复回答"
+
+    if player_name == question_data['asker']:
+        return FAIL + "自己出的题不需要回答"
+
+    question_data['answers'][player_name] = answer
+
+    result_msg = ""
+    if answer == "折":
+        game_data['fingers'][player_name] -= 1
+        if game_data['fingers'][player_name] <= 0:
+            game_data['status'][player_name] = "out"
+            result_msg = f"💀 [{player_name}] 回答 **折**，手指已折完，**出局**！"
+        else:
+            result_msg = f"✅ [{player_name}] 回答 **折**，剩余 {game_data['fingers'][player_name]} 根手指"
+    else:
+        result_msg = f"✅ [{player_name}] 回答 **不折**，保留 {game_data['fingers'][player_name]} 根手指"
+
+    active_after = [p for p in game_data['players'] if game_data['status'][p] != "out"]
+    if len(active_after) == 1:
+        saveFingerGameData(game_data, game_file)
+        return SUCCESS + f"{result_msg}\n\n🏆 游戏结束！获胜者：**{active_after[0]}**"
+
+    all_players = set(game_data['players']) - {question_data['asker']}
+    active_players = set(p for p in all_players if game_data['status'][p] != "out")
+    answered = set(question_data['answers'].keys()) - {question_data['asker']}
+    unanswered = active_players - answered
+
+    if unanswered:
+        saveFingerGameData(game_data, game_file)
+        return SUCCESS + result_msg
+    else:
+        all_folded = all(question_data['answers'].get(p) == "折" for p in active_players)
+        if all_folded and len(active_players) > 1:
+            asker = question_data['asker']
+            game_data['fingers'][asker] -= 1
+            if game_data['fingers'][asker] <= 0:
+                game_data['status'][asker] = "out"
+            saveFingerGameData(game_data, game_file)
+            extra_msg = f"\n⚠️ 所有玩家都回答折，{asker} 额外折一根！"
+            if game_data['status'][asker] == "out":
+                extra_msg += f"\n💀 [{asker}] 出局！"
+            return SUCCESS + result_msg + extra_msg
+        else:
+            saveFingerGameData(game_data, game_file)
+            return SUCCESS + result_msg
+
+def viewFingerGame(channel_id):
+    """查看所有人手指数"""
+    game_data, _ = getFingerGameData(channel_id)
+    if not game_data:
+        return FAIL + "暂无进行中的游戏"
+
+    lines = ["**【折手指游戏】当前状态：**\n"]
+
+    for p in game_data['players']:
+        fingers = game_data['fingers'][p]
+        lines.append(f"- {p}：{fingers}根")
+
+    lines.append(f"\n当前进行到第{game_data['current_round']}轮")
+
+    return "\n".join(lines)
+
+def viewCurrentRound(channel_id):
+    """查看当前轮答题情况"""
+    game_data, _ = getFingerGameData(channel_id)
+    if not game_data:
+        return FAIL + "暂无进行中的游戏"
+
+    round_num = str(game_data['current_round'])
+    if round_num not in game_data['questions']:
+        return FAIL + "暂无进行中的题目"
+
+    question_data = game_data['questions'][round_num]
+    lines = [f"**【第{round_num}题】**\n"]
+    lines.append(f"题目：{question_data['text']}")
+    lines.append(f"出题人：{question_data['asker']}\n")
+
+    answers = question_data['answers']
+    all_players = set(game_data['players']) - {question_data['asker']}
+    active_players = set(p for p in all_players if game_data['status'][p] != "out")
+
+    answered = set(answers.keys()) - {question_data['asker']}
+    unanswered = active_players - answered
+
+    folded = [p for p in answered if answers.get(p) == "折"]
+    not_folded = [p for p in answered if answers.get(p) == "不折"]
+
+    if folded:
+        lines.append(f"折：{'、'.join(folded)}")
+    if not_folded:
+        lines.append(f"不折：{'、'.join(not_folded)}")
+    if unanswered:
+        lines.append(f"待回答：{'、'.join(unanswered)}")
+
+    return "\n".join(lines)
+
+async def endFingerGame(channel_id, msg):
+    """结束折手指游戏，上传数据文件后删除"""
+    game_data, game_file = getFingerGameData(channel_id)
+    if not game_data:
+        return FAIL + "暂无进行中的游戏"
+
+    if not os.path.exists(game_file):
+        return FAIL + "游戏文件不存在"
+
+    try:
+        file_url = await bot.client.create_asset(game_file)
+        cm = CardMessage(Card(
+            Module.Header("折手指游戏记录"),
+            Module.File(type="file", src=file_url, title=f"折手指_{channel_id}.json")
+        ))
+        await msg.reply(cm)
+    except Exception as e:
+        logger.error(e)
+        await msg.reply(FAIL + "文件上传失败")
+
+    # 删除本地文件
+    try:
+        os.remove(game_file)
+    except Exception:
+        pass
+
+    return SUCCESS + "游戏已结束，数据已归档"
 
 def updateSData(message):
     try:

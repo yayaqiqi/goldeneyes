@@ -1,11 +1,11 @@
 {
     "name": "马克",
     "sName": "头颅",
-    "finished": 7,
+    "finished": 8,
     "groups": 13,
     "details": {
         "1568354809299557": {
-            "is_finished": 1,
+            "is_finished": 0,
             "counts": 33,
             "last_time": "2026-03-15 16:00",
             "current_person": "马克",
@@ -105,7 +105,7 @@
             ]
         },
         "3977450773851094": {
-            "is_finished": 0,
+            "is_finished": 1,
             "counts": 0,
             "last_time": "2026-04-29 23:41",
             "current_person": "观荐",
