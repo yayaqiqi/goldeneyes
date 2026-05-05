@@ -673,6 +673,8 @@ def remind(sName):
                     diff_latest_mention = utils.calculate_now_hour_diff_by_timestamp(last_mention_time)
                     if diff_latest_mention > 12:
                         sendMessage(channel_id,f"(met){sData['user_ids'][name]}(met)",9)
+                else:
+                    sendMessage(channel_id,f"(met){sData['user_ids'][name]}(met)",9)
                 remind_list.append(f"{info['EP']} (chn){channel_id}(chn) 已提醒,*{name} ({diff}h)*")
                     
     return SUCCESS + "提醒完成，12小时内提醒过不会重复提醒。\n" + "\n".join(remind_list)
@@ -1748,7 +1750,8 @@ def askFingerQuestion(player_name, question, channel_id):
     lines = [f"**【折手指 · 第{round_num}题】**\n"]
     lines.append(f"**{player_name}** ：")
     lines.append(f"{question}\n")
-    lines.append(f"\n请其他玩家回复：折手指·姓名·折/不折·题{round_num}")
+    lines.append(f"\n请其他玩家回复：折手指·姓名·折/不折")
+    lines.append(f"若后续补折，请使用指令：折手指·姓名·折/不折·题{round_num}")
 
     return "\n".join(lines)
 
@@ -1774,12 +1777,16 @@ def answerFingerQuestion(player_name, answer, round_num, channel_id):
 
     question_data = game_data['questions'][round_num]
 
-    if player_name in question_data['answers']:
-        old_answer = question_data['answers'][player_name]
-        return FAIL + f"你已在第{round_num}题回答过 [{old_answer}]，无法重复回答"
-
     if player_name == question_data['asker']:
         return FAIL + "自己出的题不需要回答"
+
+    if player_name in question_data['answers']:
+        old_answer = question_data['answers'][player_name]
+        if old_answer == answer:
+            return FAIL + f"你已在第{round_num}题回答过 [{old_answer}]，无需重复回答"
+        elif old_answer == "折":
+            game_data['fingers'][player_name] += 1
+            logger.info(f"{player_name} 答案修改，原答案为折，手指数增加1根")
 
     question_data['answers'][player_name] = answer
 
@@ -1790,9 +1797,9 @@ def answerFingerQuestion(player_name, answer, round_num, channel_id):
             game_data['status'][player_name] = "out"
             result_msg = f"💀 [{player_name}] 回答 **折**，手指已折完，**出局**！"
         else:
-            result_msg = f"✅ [{player_name}] 回答 **折**，剩余 {game_data['fingers'][player_name]} 根手指"
+            result_msg = f"[{player_name}] 回答 **折**，剩余 {game_data['fingers'][player_name]} 根手指"
     else:
-        result_msg = f"✅ [{player_name}] 回答 **不折**，保留 {game_data['fingers'][player_name]} 根手指"
+        result_msg = f"[{player_name}] 回答 **不折**，保留 {game_data['fingers'][player_name]} 根手指"
 
     active_after = [p for p in game_data['players'] if game_data['status'][p] != "out"]
     if len(active_after) == 1:
@@ -1809,13 +1816,14 @@ def answerFingerQuestion(player_name, answer, round_num, channel_id):
         return SUCCESS + result_msg
     else:
         all_folded = all(question_data['answers'].get(p) == "折" for p in active_players)
-        if all_folded and len(active_players) > 1:
+        all_unfolded = all(question_data['answers'].get(p) == "不折" for p in active_players)
+        if (all_folded or all_unfolded) and len(active_players) > 1:
             asker = question_data['asker']
             game_data['fingers'][asker] -= 1
             if game_data['fingers'][asker] <= 0:
                 game_data['status'][asker] = "out"
             saveFingerGameData(game_data, game_file)
-            extra_msg = f"\n⚠️ 所有玩家都回答折，{asker} 额外折一根！"
+            extra_msg = f"\n⚠️ 所有玩家一致，{asker} 额外折一根！"
             if game_data['status'][asker] == "out":
                 extra_msg += f"\n💀 [{asker}] 出局！"
             return SUCCESS + result_msg + extra_msg
