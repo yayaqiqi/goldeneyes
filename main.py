@@ -128,9 +128,17 @@ async def handle_all_messages(msg: Message):
         await msg.reply(rpl_str)
 
     elif message.startswith(".") or message.startswith("．") or message.startswith("。"):
-        rpl = dice_main.roll_dice(message,user_nickname)
-        if rpl:
+        # .help 和 .helpdoc
+        if message.startswith(".helpdoc") or message.startswith("．helpdoc") or message.startswith("。helpdoc"):
+            rpl = setHelp(message)
             await msg.reply(rpl)
+        elif message.startswith(".help") or message.startswith("．help") or message.startswith("。help"):
+            rpl = getHelp(message)
+            await msg.reply(rpl)
+        else:
+            rpl = dice_main.roll_dice(message,user_nickname)
+            if rpl:
+                await msg.reply(rpl)
 
     elif message.startswith("通讯·"):
         contents = message.replace("通讯·","").strip()
@@ -752,6 +760,59 @@ def playedUpdatedRecord(message, msg=None,channel_id=None):
         pdata['details'][channel_id]['content'].append(message)
         saveRecord(sData['sName'], pname, pdata)
         logger.info(f"updated [{pname}]!")
+
+
+def setHelp(message):
+    """设置帮助文档：.helpdoc 功能名称 功能介绍"""
+    # 支持全角和半角句号
+    for sep in [".helpdoc", "．helpdoc", "。helpdoc"]:
+        if message.startswith(sep):
+            content = message.replace(sep, "").strip()
+            break
+
+    parts = content.split(" ", 1)
+    if len(parts) < 2:
+        return FAIL + "格式错误：.helpdoc 功能名称 功能介绍"
+
+    name = parts[0].strip()
+    desc = parts[1].strip()
+
+    if not name or not desc:
+        return FAIL + "功能名称和介绍不能为空"
+
+    _,help_data = loadData("help")
+    if not help_data:
+        help_data = {}
+    help_data[name] = desc
+    setData("help",help_data)
+
+    return SUCCESS + "设置成功"
+
+def getHelp(message):
+    """查看帮助：.help 功能名称"""
+    for sep in [".help", "．help", "。help"]:
+        if message.startswith(sep):
+            content = message.replace(sep, "").strip()
+            break
+
+    if not content:
+        # 显示所有帮助
+        _,help_data = loadData("help")
+        if not help_data:
+            return FAIL + "暂无帮助文档，请使用 .helpdoc 功能名称 功能介绍 添加"
+
+        lines = ["**【帮助文档】**"]
+        for name, desc in help_data.items():
+            lines.append(f"**{name}**：\n{desc}\n")
+        return "\n".join(lines)
+
+    name = content.strip()
+    _,help_data = loadData("help")
+
+    if name in help_data:
+        return f"{help_data[name]}"
+    else:
+        return FAIL + f"未找到 [{name}] 的帮助文档"
 
 def getMsgContent(msg):
     message = "Message Type Not 9 and 10"
