@@ -203,7 +203,166 @@ def getMiniDateInviteContent(content,icon_src):
       }]
     return render(j)
 
-getMiniDateInviteContet = getMiniDateInviteContent
+def getRelationInviteContent(content,icon_src):
+
+
+    EP = content.split("发起人：")[0].strip()
+    sender = content.split("发起人：", 1)[1].split("接收人：", 1)[0].strip()
+    recever_name = content.split("接收人：", 1)[1].split("留言：", 1)[0].strip()
+    note = content.split("留言：", 1)[1].strip()
+
+    content = content + "\nicon：" + icon_src
+    accept_value = "接受关系线·" + content
+    reject_value = "拒绝关系线·" + content
+
+    j = [
+      {
+        "type": "card",
+        "theme": "info",
+        "size": "lg",
+        "modules": [
+          {
+            "type": "header",
+            "text": {
+              "type": "plain-text",
+              "content": "关系线·默认"
+            }
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "kmarkdown",
+              "content": "**(font)留言：(font)[warning]** 前任？"
+            }
+          },
+          {
+            "type": "context",
+            "elements": [
+              {
+                "type": "kmarkdown",
+                "content": "***发起人***:  *观荐* "
+              }
+            ]
+          },
+          {
+            "type": "action-group",
+            "elements": [
+              {
+                "type": "button",
+                "theme": "primary",
+                "value": "ok",
+                "text": {
+                  "type": "plain-text",
+                  "content": "接受"
+                }
+              },
+              {
+                "type": "button",
+                "theme": "danger",
+                "value": "cancel",
+                "text": {
+                  "type": "plain-text",
+                  "content": "拒绝"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    return render(j)
+    
+def getRelationDisEnableContent(content,m):
+    EP = content.split("发起人：")[0].strip()
+    sender = content.split("发起人：", 1)[1].split("接收人：", 1)[0].strip()
+    recever_name = content.split("接收人：", 1)[1].split("时间：", 1)[0].strip()
+    time = content.split("时间：", 1)[1].split("地点：", 1)[0].strip()
+    address = content.split("地点：", 1)[1].split("留言：", 1)[0].strip()
+    note = content.split("留言：", 1)[1].split("icon：", 1)[0].strip()
+    icon_src = content.split("icon：", 1)[1].strip()
+
+    j = [{
+        "type": "card",
+        "size": "sm",
+        "theme": "info",
+        "modules": [
+          {
+            "type": "header",
+            "text": {
+              "type": "plain-text",
+              "content": "私约邀请·" + EP
+            }
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "kmarkdown",
+              "content": "**邀请人**"
+            }
+          },
+          {
+            "type": "section",
+            "mode": "left",
+            "accessory": {
+              "type": "image",
+              "src": icon_src,
+              "circle": True
+            },
+            "text": {
+              "type": "kmarkdown",
+              "content": "*" + sender + "*"
+            }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "kmarkdown",
+              "content": "**邀约详情**"
+            }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "kmarkdown",
+              "content": "**时间：**"+time +"\n**地点：**" + address
+            }
+          },
+          {
+            "type": "context",
+            "elements": [
+              {
+                "type": "kmarkdown",
+                "content": "***留言：****"+ note + "*"
+              }
+            ]
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "action-group",
+            "elements": [
+              {
+                "type": "button",
+                "theme": "secondary",
+                "value": "done",
+                "text": {
+                  "type": "plain-text",
+                  "content": m
+                }
+              }
+            ]
+          }
+        ]
+      }]
+
+    return render(j)
 
 def getMiniDateDisEnableContent(content,m):
     EP = content.split("发起人：")[0].strip()
@@ -727,3 +886,54 @@ def getCaidianContent(locations):
     }]
 
     return render(j)
+
+
+
+def getParanoeaContent(end_time_ms, question_id):
+  j = [
+  {
+    "type": "card",
+    "theme": "secondary",
+    "size": "sm",
+    "modules": [
+      {
+        "type": "header",
+        "text": {
+          "type": "plain-text",
+          "content": f"偏执狂 · 第{question_id}轮"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "kmarkdown",
+          "content": ""
+        }
+      },
+      {
+        "type": "countdown",
+        "mode": "hour",
+        "endTime": end_time_ms
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "action-group",
+        "elements": [
+          {
+            "type": "button",
+            "theme": "primary",
+            "value": f"偏执狂·ok·{question_id}",
+            "click": "return-val",
+            "text": {
+              "type": "plain-text",
+              "content": "喝（点击后无法撤回）"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+  return render(j)

@@ -1,6 +1,6 @@
 from sys import path
 from turtle import goto
-from khl import Bot, Message, MessageTypes, Event, EventTypes
+from khl import Bot, Message, MessageTypes, Event, EventTypes, message
 from khl.card import Card, CardMessage, Module, Types, Element, Struct
 import json
 import logging
@@ -250,6 +250,14 @@ async def handle_all_messages(msg: Message):
         rpl = getStatistics(msg)
         await msg.reply(rpl)
 
+    elif message.startswith("偏执狂·"):
+        rpl = handleParanoea(message, msg)
+        await msg.reply(rpl)
+
+    elif message == "统计偏执狂":
+        rpl = viewParanoea(msg.target_id)
+        await msg.reply(rpl)
+
     elif message.startswith("折手指·"):
         rpl = await handleFingerGame(message, msg)
         await msg.reply(rpl)
@@ -325,6 +333,11 @@ async def handle_all_events(msg:Message, e:Event):
 
     elif message.startswith("踩点选择"):
         rpl = selectCaidian(message, user_nickname,target_id)
+
+    elif message.startswith("偏执狂·ok·"):
+        rpl = clickParanoea(message, user_nickname, target_id, msg_id)
+        if rpl:
+            await ch.send(rpl)
 
 
 def gotoEP(message,msg):
@@ -762,8 +775,11 @@ def playedUpdatedRecord(message, msg=None,channel_id=None):
         logger.info(f"updated [{pname}]!")
 
 
-def setHelp(message):
+def setHelp(message,msg):
     """设置帮助文档：.helpdoc 功能名称 功能介绍"""
+    if not isAdmin(msg.user_id):
+        return FAIL + "您不是管理员，无法设置帮助文档"
+
     # 支持全角和半角句号
     for sep in [".helpdoc", "．helpdoc", "。helpdoc"]:
         if message.startswith(sep):
@@ -803,7 +819,7 @@ def getHelp(message):
 
         lines = ["**【帮助文档】**"]
         for name, desc in help_data.items():
-            lines.append(f"**{name}**：\n{desc}\n")
+            lines.append(f"{name}")
         return "\n".join(lines)
 
     name = content.strip()
@@ -1708,6 +1724,120 @@ def getCaidianInfo(channel_id):
             result.append(f"- {loc}：（暂无）")
 
     return "\n".join(result)
+
+def handleParanoea(message, msg):
+    """处理偏执狂指令
+    格式：偏执狂·题面·倒计时分钟（默认3分钟）
+    """
+    channel_id = msg.target_id
+    user_id = msg.author_id
+
+    sData = getsDataJsonByChannelId(channel_id)
+    if not isAdmin(user_id, sData):
+        return FAIL + "仅管理员可使用此功能"
+
+    # 解析参数
+    content = message.replace("偏执狂·", "").strip()
+    parts = content.split("·")
+
+    if len(parts) < 1 or not parts[0]:
+        return FAIL + "格式错误：偏执狂·题面·倒计时分钟（倒计时可不填，默认3分钟）"
+
+    question = parts[0].strip()
+    minutes = int(parts[1].strip()) if len(parts) > 1 and parts[1].strip().isdigit() else 3
+
+    # 计算结束时间（毫秒时间戳）
+    end_time_ms = int((datetime.datetime.now() + datetime.timedelta(minutes=minutes)).timestamp() * 1000)
+
+    # 保存游戏状态
+    if 'paranoea' not in sData:
+        sData['paranoea'] = {}
+
+    question_id = len(sData['paranoea']) + 1
+    sData['paranoea'][question_id] = {
+        "question": question,
+        "end_time": end_time_ms,
+        "minutes": minutes,
+        "clicked": [],
+        "card_msg_id": msg.id,
+        "channel_id": channel_id
+    }
+    setData(sData['sName'], sData)
+
+    # 发送卡片
+    card_content = T.getParanoeaContent(end_time_ms, question_id)
+
+    # 发送到公共频道（踩点频道或第一个EP频道）
+    public_channel_id = sData.get('public_channels', {}).get('paranoea')
+    if public_channel_id:
+        sendMessage(public_channel_id, card_content, 10)
+        setData(sData['sName'], sData)
+        return SUCCESS + f"第{question_id}轮偏执狂已开启\n题面：{question}\n倒计时：{minutes}分钟"
+    else:
+        return FAIL + "未配置公共频道，无法发送偏执狂卡片。配置指令：更改信息·恋综名称 public_channels paranoea 频道ID"
+
+def viewParanoea(channel_id):
+    """统计偏执狂点击情况"""
+    sData = getsDataJsonByChannelId(channel_id)
+
+    if 'paranoea' not in sData:
+        return FAIL + "当前没有进行中的偏执狂"
+
+    paranoea = sData['paranoea']
+    lines = []
+    lines.append("**偏执狂统计**\n")
+
+    from collections import Counter
+    # 收集所有轮次的点击
+    all_clicked = []
+    for p in paranoea.values():
+        all_clicked.extend(p['clicked'])
+
+    if all_clicked:
+        click_count = Counter(all_clicked)
+        click_details = [f"{name} ×{count}" for name, count in click_count.items()]
+        lines.append("\n".join(click_details))
+    else:
+        lines.append("（暂无点击记录）")
+
+    return "\n".join(lines)
+
+def clickParanoea(_message, user_nickname, channel_id, _msg_id):
+    """处理偏执狂按钮点击"""
+    user_nickname = user_nickname.strip()
+
+    sData = getsDataJsonByChannelId(channel_id)
+
+    if 'paranoea' not in sData:
+        return FAIL + "当前没有进行中的偏执狂"
+
+    question_id = _message.replace("偏执狂·ok·", "").strip()
+    paranoea = sData['paranoea'][question_id]
+
+    # 检查是否过期
+    now_ms = int(datetime.datetime.now().timestamp() * 1000)
+    if now_ms > paranoea['end_time']:
+        return FAIL + f"第{question_id}轮偏执狂已结束"
+        
+
+    # 检查是否已点击
+    if user_nickname in paranoea['clicked']:
+        return FAIL + f"[{user_nickname}] 在第{question_id}轮已点击过，无法重复点击"
+
+    # 检查是否在 solos 中
+    if user_nickname not in sData.get('solos', {}):
+        return FAIL + f"[{user_nickname}] 不在参与者名单中"
+
+    # 添加点击记录
+    paranoea['clicked'].append(user_nickname)
+    setData(sData['sName'], sData)
+
+    # 发送题面到玩家个人频道
+    solo_channel_id = sData['solos'][user_nickname]
+    content = f"**【偏执狂（第{question_id}轮）】**\n\n{paranoea['question']}"
+    sendMessage(solo_channel_id, content, 9)
+
+    return SUCCESS + f"[{user_nickname}] 已确认！第{question_id}轮题面已发送。"
 
 async def handleFingerGame(message, msg):
     """统一处理折手指系列指令"""
