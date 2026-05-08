@@ -33,10 +33,14 @@ pip install khl requests
 ```
 
 ### 启动
-
+#### 方式一：命令行
+适用于所有操作系统
 ```bash
 python main.py
 ```
+
+#### 方式二
+适用于windows,运行 `run.bat`
 
 ## 项目结构
 
