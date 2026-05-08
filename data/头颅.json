@@ -31,7 +31,8 @@
         "public_notes": "2840026963443887",
         "music": "8347199433944174",
         "wishwall": "1480899100394710",
-        "caidian": "1480899100394710"
+        "caidian": "1480899100394710",
+        "paranoea": "8347199433944174"
     },
     "user_ids": {
         "马克": "3199247469",
@@ -52,6 +53,114 @@
         "selections": {
             "观荐": "F",
             "coconut": "F"
+        }
+    },
+    "paranoea": {
+        "1": {
+            "question": "这是题面",
+            "end_time": 1778165924283,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "92bdd446-f099-4be8-bbac-430063b45a51",
+            "channel_id": "2759382593699438"
+        },
+        "2": {
+            "question": "这是题面",
+            "end_time": 1778166017560,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "b94d85d4-6254-4503-a9eb-d05c8c6dbb01",
+            "channel_id": "2759382593699438"
+        },
+        "3": {
+            "question": "这是题面",
+            "end_time": 1778166061288,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "3519c80f-8718-4e6c-b9a4-32ef8663f2a2",
+            "channel_id": "2759382593699438"
+        },
+        "4": {
+            "question": "这是题面",
+            "end_time": 1778166145197,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "8db8d472-b88b-4be9-b1b1-34980e4a85a7",
+            "channel_id": "2759382593699438"
+        },
+        "5": {
+            "question": "这是题面",
+            "end_time": 1778166252053,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "e49854a5-353c-4e48-b28a-54a0bcdb9568",
+            "channel_id": "2759382593699438"
+        },
+        "6": {
+            "question": "这是题面",
+            "end_time": 1778166300714,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "a8287181-7a0b-4dba-8a02-54891813ed32",
+            "channel_id": "2759382593699438"
+        },
+        "7": {
+            "question": "这是题面",
+            "end_time": 1778166362679,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "86eab6c4-9f26-4f37-8b73-bfe8cb52b01c",
+            "channel_id": "3291167003164859"
+        },
+        "8": {
+            "question": "这是题面",
+            "end_time": 1778166438621,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "dacc6cdd-64b0-4700-a04f-3deb1ec8c321",
+            "channel_id": "3291167003164859"
+        },
+        "9": {
+            "question": "这是题面",
+            "end_time": 1778166683354,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "62b904b7-65f7-43f9-a709-5548d9813c1d",
+            "channel_id": "3291167003164859"
+        },
+        "10": {
+            "question": "这是题面",
+            "end_time": 1778166716357,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "a13d653b-cb3f-44ea-9547-cac0f73cfff5",
+            "channel_id": "3291167003164859"
+        },
+        "11": {
+            "question": "这是题面",
+            "end_time": 1778166847629,
+            "minutes": 3,
+            "clicked": [
+                "观荐"
+            ],
+            "card_msg_id": "9d1b7e18-4055-4f4f-b0b8-c53284233d0f",
+            "channel_id": "3291167003164859"
+        },
+        "12": {
+            "question": "查看",
+            "end_time": 1778167067629,
+            "minutes": 3,
+            "clicked": [],
+            "card_msg_id": "dff86f6d-fbe1-4281-a7d7-245bf828d33b",
+            "channel_id": "1480899100394710"
+        },
+        "13": {
+            "question": "kiss who",
+            "end_time": 1778167066931,
+            "minutes": 1,
+            "clicked": [],
+            "card_msg_id": "7c917b2f-ec5e-476e-9131-c5538467da54",
+            "channel_id": "1480899100394710"
         }
     }
 }

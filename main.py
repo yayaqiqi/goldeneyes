@@ -289,7 +289,33 @@ async def handle_all_messages(msg: Message):
         await msg.reply(cm)
         # await msg.reply(file_url, type=MessageTypes.FILE)
         await msg.reply(rpl)
-    
+
+    elif message.startswith("生成恋综纪念册·"):
+        if not isAdmin(user_id):
+            await msg.reply(FAIL + "操作失败，您不是管理员")
+            return
+
+        content = message.replace("生成恋综纪念册·","").strip()
+        sName = content
+        if not sName:
+            await msg.reply(FAIL + "操作失败，指令：生成恋综纪念册·恋综名称")
+            return
+
+        OUTPUT_HTML = PATH + sName + "/恋综纪念册_" + sName + ".html"
+        rpl = R.generateSeriesRecord(sName, OUTPUT_HTML)
+
+        if not rpl.startswith("✅"):
+            await msg.reply(rpl)
+            return
+
+        file_url = await bot.client.create_asset(OUTPUT_HTML)
+        cm = CardMessage(Card(
+            Module.Header(f"{sName} · 恋综纪念册"),
+            Module.File(type="file", src=file_url, title='恋综纪念册.html')
+        ))
+        await msg.reply(cm)
+        await msg.reply(rpl)
+
     elif message.startswith("进入EP："):
         rpl = gotoEP(message,msg)
         await msg.reply(rpl)
